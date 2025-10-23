@@ -1,3 +1,11 @@
+## Setup (updated, Oct 1st):
+
+Rmb to install npm in your laptop:
+
+npm install
+npm run dev
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.

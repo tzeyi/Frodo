@@ -1,23 +1,14 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import DashboardPage from './pages/DashboardPage';
 
-function App() {
-  const [count, setCount] = useState(0)
 
+export default function App() {
   return (
-    <>
-      <h1 class="text-3xl font-bold underline text-red-200">
-        Hello world!
-      </h1>
-      <button className="btn btn-success">Success</button>
-      <button className="btn btn-warning">Warning</button>
-      <button className="btn btn-error">Error</button>
-
-      <button className="btn btn-soft btn-error">Error</button>
-    </>
-  )
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<DashboardPage/>} />
+        {/* <Route path="/tickets" element={<Tickets />} /> */}
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default App
