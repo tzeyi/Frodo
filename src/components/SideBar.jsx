@@ -1,4 +1,5 @@
 import { useNavigate, useLocation } from 'react-router-dom'
+import { IoTicketOutline } from "react-icons/io5";
 
 const SideBar = ({pageContent}) => {
 
@@ -15,9 +16,7 @@ const SideBar = ({pageContent}) => {
       },
       {
         label: "Tickets",
-        icon: (
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="inline-block size-4 my-1.5"><path d="M20 7h-9"></path><path d="M14 17H5"></path><circle cx="17" cy="17" r="3"></circle><circle cx="7" cy="7" r="3"></circle></svg>
-        ),
+        icon: <IoTicketOutline/>,
         onClick: () => navigate("/tickets")
       },
       {
@@ -39,7 +38,7 @@ const SideBar = ({pageContent}) => {
 
               <div className="drawer-side is-drawer-close:overflow-visible">
                   <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-                      <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-200 flex flex-col items-start min-h-full">
+                      <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-300 flex flex-col items-start min-h-full">
                       {/* Sidebar content here */}
                       <ul className="menu w-full grow">
                           {/* list item */}

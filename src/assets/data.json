@@ -1,0 +1,75 @@
+{
+  "resources": [
+    { "type": "water", "target": 1000, "amount": 500, "unit": "bottles" },
+    { "type": "towels", "target": 500, "amount": 100, "unit": "pieces" },
+    { "type": "food", "target": 750, "amount": 450, "unit": "meals" }
+  ],
+  "funding": {
+    "totalAcquired": 25000,
+    "totalUsed": 18000,
+    "remaining": 7000
+  },
+  "tickets": [
+    {
+      "id": 1,
+      "title": "Urgent water shortage",
+      "description": "lorem ipsum",
+      "resourceType": "water",
+      "amountRequested": 200,
+      "status": "open",
+      "priority": "high",
+      "location": "North District",
+      "timeOpened": "2025-10-20T08:30:00Z",
+      "timeClosed": null
+    },
+    {
+      "id": 2,
+      "title": "Food supplies needed",
+      "description": "lorem ipsum",
+      "resourceType": "food",
+      "amountRequested": 100,
+      "status": "in-progress",
+      "priority": "medium",
+      "location": "South District",
+      "timeOpened": "2024-10-20T08:30:00Z",
+      "timeClosed": null
+    }
+  ],
+  "accounts":[
+    {
+    "id": 1,
+    "name": "John Smith",
+    "organization": "Ann Arbor Disaster Relief",
+    "role": "Volunteer",
+    "locations": [
+      {
+        "id": 1,
+        "name": "Ann Arbor",
+        "lat": 42.2808,
+        "lon": 83.7430
+      },
+      {
+        "id": 2,
+        "name": "Detroit",
+        "lat": 42.3314,
+        "lon": 83.0458
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Jane Doe",
+    "organization": "Detroit Relief Org",
+    "role": "Admin",
+    "locations": [
+      {
+        "id": 2,
+        "name": "Detroit",
+        "lat": 42.3314,
+        "lon": 83.0458
+      }
+    ]
+  }
+]
+  
+}
