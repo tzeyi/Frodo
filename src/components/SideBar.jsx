@@ -1,5 +1,6 @@
 import { useNavigate, useLocation } from 'react-router-dom'
 import { IoTicketOutline } from "react-icons/io5";
+import { LuListChecks } from "react-icons/lu";
 
 const SideBar = ({ pageContent }) => {
 
@@ -18,6 +19,11 @@ const SideBar = ({ pageContent }) => {
             label: "Tickets",
             icon: <IoTicketOutline />,
             onClick: () => navigate("/tickets")
+        },
+        {
+            label: "Forum",
+            icon: <LuListChecks />,
+            onClick: () => navigate("/forum")
         },
         {
             label: "Settings",

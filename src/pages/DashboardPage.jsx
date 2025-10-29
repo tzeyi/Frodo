@@ -7,6 +7,7 @@ import SideBar from '../components/SideBar'
 import { PieChart, LineChart, BarChart } from '../components/Charts'
 import data from '../assets/data.json'
 import moment from 'moment';
+import EventCard from '../components/EventCard'
 
 
 function DashboardPage() {
@@ -14,30 +15,10 @@ function DashboardPage() {
 
   const resources = data.resources
   const funding = data.funding
+  const events = data.events
   const tickets = data.tickets
 
   // Prepare chart data from JSON data
-  const resourcesPieData = {
-    labels: resources.map(r => r.type.charAt(0).toUpperCase() + r.type.slice(1)),
-    datasets: [
-      {
-        label: 'Current Amount',
-        data: resources.map(r => r.amount),
-        backgroundColor: [
-          'rgba(59, 130, 246, 0.8)',  // Blue
-          'rgba(16, 185, 129, 0.8)',  // Green  
-          'rgba(245, 158, 11, 0.8)',  // Yellow
-        ],
-        borderColor: [
-          'rgba(59, 130, 246, 1)',
-          'rgba(16, 185, 129, 1)',
-          'rgba(245, 158, 11, 1)',
-        ],
-        borderWidth: 2,
-      },
-    ],
-  };
-
   const barChartData = {
         labels: resources.map(r => r.type.charAt(0).toUpperCase() + r.type.slice(1)),
         datasets: [
@@ -55,7 +36,6 @@ function DashboardPage() {
         }
         ]
     };
-
 
   const fundingLineData = {
     labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
@@ -118,7 +98,7 @@ function DashboardPage() {
                   <div className="badge badge-success gap-1 font-medium">↑ 17 </div>
                 </div>
 
-                <h1 className="text-3xl font-bold">32,500</h1>
+                <h1 className="text-2xl font-bold pt-3">32,500</h1>
               </div>
 
               <div className="divider my-0"></div>
@@ -213,93 +193,10 @@ function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
           {/* Event 1: Emergency Shelter Setup */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h3 className="card-title text-lg">Emergency Shelter Setup</h3>
-              <p className="text-sm opacity-70 mb-2">Shelter for displaced families after flooding</p>
-
-              <div className="space-y-3">
-                {/* Towels needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-secondary mr-2">Towels</div>
-                      Need 200 towels
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">75/200</span>
-                    <span className="text-xs opacity-60">38% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-secondary h-2 rounded-full" style={{ width: '38%' }}></div>
-                  </div>
-                </div>
-
-                {/* Blankets needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-success mr-2">Blankets</div>
-                      Need 150 blankets
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">120/150</span>
-                    <span className="text-xs opacity-60">80% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-success h-2 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Event 2: Food Distribution Center */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h3 className="card-title text-lg">Food Distribution Center</h3>
-              <p className="text-sm opacity-70 mb-2">Daily meal service for 500 families</p>
-
-              <div className="space-y-3">
-                {/* Food needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-accent mr-2">Food</div>
-                      Need 500 meals
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">420/500</span>
-                    <span className="text-xs opacity-60">84% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-accent h-2 rounded-full" style={{ width: '84%' }}></div>
-                  </div>
-                </div>
-
-                {/* Water needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-info mr-2">Water</div>
-                      Need 1000 bottles
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">800/1000</span>
-                    <span className="text-xs opacity-60">80% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-info h-2 rounded-full" style={{ width: '80%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
+          {events.map((event, index) => 
+            <EventCard key={index} eventTitle={event.name} eventDesc={event.description} eventTickets={tickets}/>
+          )}
+          
           {/* Event 3: Medical Aid Station */}
           <div className="card bg-base-100 shadow-xl">
             <div className="card-body">

@@ -24,6 +24,24 @@
     "totalUsed": 18000,
     "remaining": 7000
   },
+  "events": [
+    {
+      "id": "event123",
+      "name": "Emergency Shelter Setup",
+      "description": "Shelter for displaced families after flooding",
+      "startDate": "2024-10-15T00:00:00Z",
+      "location": "Coastal Region",
+      "status": "active"
+    },
+    {
+      "id": "event1234",
+      "name": "Food Distribution Center",
+      "description": "Daily meal service for 500 families",
+      "startDate": "2024-10-15T00:00:00Z",
+      "location": "Coastal Region",
+      "status": "active"
+    }
+  ],
   "tickets": [
     {
       "id": 1,
@@ -31,11 +49,13 @@
       "description": "lorem ipsum",
       "resourceType": "water",
       "amountRequested": 200,
+      "amountAchieved": 0,
       "status": "open",
       "priority": "high",
       "location": "North District",
       "timeOpened": "2025-10-20T08:30:00Z",
-      "timeClosed": null
+      "timeClosed": null,
+      "eventId": "event123"
     },
     {
       "id": 2,
@@ -43,23 +63,27 @@
       "description": "lorem ipsum",
       "resourceType": "food",
       "amountRequested": 100,
+      "amountAchieved": 50,
       "status": "in-progress",
       "priority": "medium",
       "location": "South District",
       "timeOpened": "2024-10-20T08:30:00Z",
-      "timeClosed": null
+      "timeClosed": null,
+      "eventId": "event123"
     },
     {
       "id": 3,
-      "title": "Food supplies needed",
+      "title": "Need 25 volunteers to setup tents",
       "description": "lorem ipsum",
-      "resourceType": "food",
-      "amountRequested": 100,
+      "resourceType": "labor",
+      "amountRequested": 25,
+      "amountAchieved": 18,
       "status": "in-progress",
       "priority": "medium",
       "location": "South District",
       "timeOpened": "2024-10-20T08:30:00Z",
-      "timeClosed": null
+      "timeClosed": null,
+      "eventId": "event123"
     }
   ],
   "accounts": [
