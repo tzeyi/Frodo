@@ -1,7 +1,7 @@
 // For examples: https://react-chartjs-2.js.org/examples
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement } from "chart.js";
-import { Pie, Line } from "react-chartjs-2";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, PointElement, LineElement, BarElement } from "chart.js";
+import { Pie, Line, Bar } from "react-chartjs-2";
 
 ChartJS.register(
     ArcElement, 
@@ -11,62 +11,39 @@ ChartJS.register(
     LinearScale,
     PointElement,
     LineElement,
+    BarElement
 )
 
 
-// Pie Chart - Now accepts data as props
-const PieChart = ({ data: chartData, title = "Distribution" }) => {
-    const defaultData = {
-        labels: ['Red', 'Blue', 'Yellow'],
-        datasets: [
-            {
-                label: '# of Votes',
-                data: [12, 19, 3],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
+// Pie Chart
+const PieChart = ({ data: chartData, title}) => {
     return (
         <div className="w-full">
             <h3 className="text-center font-semibold mb-2">{title}</h3>
-            <Pie data={chartData || defaultData}/>
+            <Pie data={chartData}/>
         </div>
     )
 }
 
-// Line Chart - Now accepts data as props
-const LineChart = ({ data: chartData, title = "Trend" }) => {
-    const defaultData = {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [
-            {
-                label: 'Sales',
-                data: [12, 19, 3, 5, 2, 3],
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                tension: 0.4 // Makes the line curved
-            }
-        ]
-    };
-
+// Line Chart
+const LineChart = ({ data: chartData, title}) => {
     return (
         <div className="w-full mb-4">
             <h3 className="text-center font-semibold mb-2">{title}</h3>
-            <Line data={chartData || defaultData}/>
+            <Line data={chartData}/>
+        </div>
+    )
+}
+
+// Bar Chart
+const BarChart = ({ data: chartData, title}) => {
+    return (
+        <div className="w-full mb-4">
+            <h3 className="text-center font-semibold mb-2">{title}</h3>
+            <Bar data={chartData} />
         </div>
     )
 }
 
 
-export { PieChart, LineChart }
+export { PieChart, LineChart, BarChart }
