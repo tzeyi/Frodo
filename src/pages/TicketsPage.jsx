@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import SideBar from '../components/SideBar'
 import data from '../assets/data.json'
-import CreateEventButton from '../components/createEventButton'
 
 
 function TicketsPage() {
@@ -166,7 +165,7 @@ function TicketsPage() {
       </section>
 
       {/* Stats */}
-      <section className="p-5">
+      <section className="p-5 flex justify-between items-end">
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Open</div>
@@ -184,6 +183,117 @@ function TicketsPage() {
             <div className="stat-desc">filtered by event if selected</div>
           </div>
         </div>
+
+        {/* Open the modal using document.getElementById('ID').showModal() method */}
+        {/* TODO: Connect to Firebase, make button be able to POST */}
+        <button className="btn mb-2" onClick={() => document.getElementById('my_modal_5').showModal()}>Create Tickets</button>
+        <dialog id="my_modal_5" className="modal modal-bottom sm:modal-middle">
+          <div className="modal-box">
+            <h3 className="font-bold text-lg">Create New Ticket</h3>
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const formData = new FormData(e.target);
+              const ticketData = {
+                description: formData.get('description'),
+                eventId: formData.get('eventId'),
+                resourceType: formData.get('resourceType'),
+                amountRequested: formData.get('amountRequested'),
+                location: formData.get('location'),
+                priority: formData.get('priority'),
+                status: formData.get('status') || 'open'
+              };
+              // Handle your form submission here
+              console.log(ticketData);
+              // Close modal after submission
+              document.getElementById('my_modal_5').close();
+            }}>
+              <div className="space-y-3 py-4">
+                <div className="flex items-start gap-4">
+                  <span className="font-semibold min-w-[120px] pt-3">Description:</span>
+                  <textarea
+                    name="description"
+                    className="textarea textarea-bordered flex-1"
+                    placeholder="Enter ticket description"
+                    rows="3"
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Event:</span>
+                  <select name="eventId" className="select select-bordered flex-1" required>
+                    <option value="">Select an event</option>
+                    {/* Add your event options here */}
+                    <option value="event1">Event 1</option>
+                    <option value="event2">Event 2</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Resource:</span>
+                  <select name="resourceType" className="select select-bordered flex-1" required>
+                    <option value="">Select resource type</option>
+                    <option value="volunteers">Volunteers</option>
+                    <option value="equipment">Equipment</option>
+                    <option value="supplies">Supplies</option>
+                    <option value="funding">Funding</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Amount:</span>
+                  <input
+                    type="number"
+                    name="amountRequested"
+                    className="input input-bordered flex-1"
+                    placeholder="Enter amount"
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Location:</span>
+                  <input
+                    type="text"
+                    name="location"
+                    className="input input-bordered flex-1"
+                    placeholder="Enter location"
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Priority:</span>
+                  <select name="priority" className="select select-bordered flex-1" required>
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <div className="flex items-center gap-4">
+                  <span className="font-semibold min-w-[120px]">Status:</span>
+                  <select name="status" className="select select-bordered flex-1" defaultValue="open">
+                    <option value="open">Open</option>
+                    <option value="in-progress">In Progress</option>
+                    <option value="closed">Closed</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="modal-action">
+                <button type="submit" className="btn btn-primary">Create Ticket</button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => document.getElementById('my_modal_5').close()}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </div>
+        </dialog>
       </section>
 
       {/* Conditional Based on View Mode */}
@@ -219,10 +329,10 @@ function TicketsPage() {
                     <td>
                       <div
                         className={`badge ${ticket.status === 'open'
-                            ? 'badge-error'
-                            : ticket.status === 'in-progress'
-                              ? 'badge-warning'
-                              : 'badge-success'
+                          ? 'badge-error'
+                          : ticket.status === 'in-progress'
+                            ? 'badge-warning'
+                            : 'badge-success'
                           }`}
                       >
                         {ticket.status}
@@ -231,10 +341,10 @@ function TicketsPage() {
                     <td>
                       <div
                         className={`badge badge-outline ${ticket.priority === 'high'
-                            ? 'badge-error'
-                            : ticket.priority === 'medium'
-                              ? 'badge-warning'
-                              : 'badge-info'
+                          ? 'badge-error'
+                          : ticket.priority === 'medium'
+                            ? 'badge-warning'
+                            : 'badge-info'
                           }`}
                       >
                         {ticket.priority}
@@ -274,10 +384,10 @@ function TicketsPage() {
                         <span className="text-xs capitalize">{ticket.resourceType}</span>
                         <div
                           className={`badge badge-sm badge-outline ${ticket.priority === 'high'
-                              ? 'badge-error'
-                              : ticket.priority === 'medium'
-                                ? 'badge-warning'
-                                : 'badge-info'
+                            ? 'badge-error'
+                            : ticket.priority === 'medium'
+                              ? 'badge-warning'
+                              : 'badge-info'
                             }`}
                         >
                           {ticket.priority}
@@ -313,10 +423,10 @@ function TicketsPage() {
                         <span className="text-xs capitalize">{ticket.resourceType}</span>
                         <div
                           className={`badge badge-sm badge-outline ${ticket.priority === 'high'
-                              ? 'badge-error'
-                              : ticket.priority === 'medium'
-                                ? 'badge-warning'
-                                : 'badge-info'
+                            ? 'badge-error'
+                            : ticket.priority === 'medium'
+                              ? 'badge-warning'
+                              : 'badge-info'
                             }`}
                         >
                           {ticket.priority}
@@ -352,10 +462,10 @@ function TicketsPage() {
                         <span className="text-xs capitalize">{ticket.resourceType}</span>
                         <div
                           className={`badge badge-sm badge-outline ${ticket.priority === 'high'
-                              ? 'badge-error'
-                              : ticket.priority === 'medium'
-                                ? 'badge-warning'
-                                : 'badge-info'
+                            ? 'badge-error'
+                            : ticket.priority === 'medium'
+                              ? 'badge-warning'
+                              : 'badge-info'
                             }`}
                         >
                           {ticket.priority}
@@ -401,10 +511,10 @@ function TicketsPage() {
                   <span className="font-semibold">Priority:</span>
                   <span
                     className={`badge badge-outline ${selectedTicket.priority === 'high'
-                        ? 'badge-error'
-                        : selectedTicket.priority === 'medium'
-                          ? 'badge-warning'
-                          : 'badge-info'
+                      ? 'badge-error'
+                      : selectedTicket.priority === 'medium'
+                        ? 'badge-warning'
+                        : 'badge-info'
                       }`}
                   >
                     {selectedTicket.priority}
@@ -414,10 +524,10 @@ function TicketsPage() {
                   <span className="font-semibold">Current Status:</span>
                   <span
                     className={`badge ${selectedTicket.status === 'open'
-                        ? 'badge-error'
-                        : selectedTicket.status === 'in-progress'
-                          ? 'badge-warning'
-                          : 'badge-success'
+                      ? 'badge-error'
+                      : selectedTicket.status === 'in-progress'
+                        ? 'badge-warning'
+                        : 'badge-success'
                       }`}
                   >
                     {selectedTicket.status}
