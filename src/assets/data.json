@@ -1,4 +1,107 @@
 {
+  "locations": [
+    {
+      "id": "loc_ann_arbor",
+      "name": "Ann Arbor",
+      "city": "Ann Arbor",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.2808,
+      "lon": -83.7430,
+      "type": "city"
+    },
+    {
+      "id": "loc_detroit",
+      "name": "Detroit",
+      "city": "Detroit",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.3314,
+      "lon": -83.0458,
+      "type": "city"
+    },
+    {
+      "id": "loc_aa_community_center",
+      "name": "Ann Arbor Community Center",
+      "city": "Ann Arbor",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.2808,
+      "lon": -83.7430,
+      "type": "facility"
+    },
+    {
+      "id": "loc_detroit_relief_center",
+      "name": "Detroit Relief Center",
+      "city": "Detroit",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.3314,
+      "lon": -83.0458,
+      "type": "facility"
+    },
+    {
+      "id": "loc_north_ann_arbor",
+      "name": "North Ann Arbor",
+      "city": "Ann Arbor",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.2950,
+      "lon": -83.7430,
+      "type": "district"
+    },
+    {
+      "id": "loc_aa_fairgrounds",
+      "name": "Ann Arbor Fairgrounds",
+      "city": "Ann Arbor",
+      "state": "Michigan",
+      "country": "USA",
+      "lat": 42.2808,
+      "lon": -83.7430,
+      "type": "facility"
+    }
+  ],
+  "organizations": [
+    {
+      "id": "org_aa_relief",
+      "name": "Ann Arbor Disaster Relief",
+      "description": "Community-based disaster response organization serving Ann Arbor and surrounding areas",
+      "locationId": "loc_ann_arbor",
+      "contact": {
+        "email": "contact@aadisasterrelief.org",
+        "phone": "(734) 555-0100"
+      },
+      "memberCount": 45,
+      "founded": "2020-03-15T00:00:00Z",
+      "status": "active"
+    },
+    {
+      "id": "org_detroit_relief",
+      "name": "Detroit Relief Org",
+      "description": "Major relief organization coordinating emergency response efforts in Detroit metro area",
+      "locationId": "loc_detroit",
+      "contact": {
+        "email": "info@detroitrelief.org",
+        "phone": "(313) 555-0200"
+      },
+      "memberCount": 120,
+      "founded": "2018-06-01T00:00:00Z",
+      "status": "active"
+    },
+    {
+      "id": "org_red_cross_mi",
+      "name": "Red Cross Michigan",
+      "description": "American Red Cross chapter serving Michigan communities",
+      "locationId": "loc_detroit",
+      "contact": {
+        "email": "michigan@redcross.org",
+        "phone": "(313) 555-0300"
+      },
+      "memberCount": 250,
+      "founded": "1950-01-01T00:00:00Z",
+      "status": "active"
+    }
+  ],
   "resources": [
     {
       "type": "water",
@@ -26,100 +129,101 @@
   },
   "events": [
     {
-      "id": "event123",
+      "id": "event_aa_shelter_2024",
       "name": "Emergency Shelter Setup",
       "description": "Shelter for displaced families after flooding",
       "startDate": "2024-10-15T00:00:00Z",
-      "location": "Coastal Region",
-      "status": "active"
+      "endDate": null,
+      "locationId": "loc_aa_community_center",
+      "organizationId": "org_aa_relief",
+      "status": "active",
+      "createdAt": "2024-10-14T00:00:00Z"
     },
     {
-      "id": "event1234",
+      "id": "event_detroit_food_2024",
       "name": "Food Distribution Center",
       "description": "Daily meal service for 500 families",
       "startDate": "2024-10-15T00:00:00Z",
-      "location": "Coastal Region",
-      "status": "active"
+      "endDate": null,
+      "locationId": "loc_detroit_relief_center",
+      "organizationId": "org_detroit_relief",
+      "status": "active",
+      "createdAt": "2024-10-14T00:00:00Z"
     }
   ],
   "tickets": [
     {
-      "id": 1,
+      "id": "ticket_001",
       "title": "Urgent water shortage",
-      "description": "lorem ipsum",
+      "description": "Need immediate water supply for shelter residents",
       "resourceType": "water",
       "amountRequested": 200,
       "amountAchieved": 0,
+      "unit": "bottles",
       "status": "open",
       "priority": "high",
-      "location": "North District",
+      "locationId": "loc_north_ann_arbor",
       "timeOpened": "2025-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event123"
+      "eventId": "event_aa_shelter_2024",
+      "organizationId": "org_aa_relief",
+      "createdBy": null
     },
     {
-      "id": 2,
+      "id": "ticket_002",
       "title": "Food supplies needed",
-      "description": "lorem ipsum",
+      "description": "Running low on non-perishable food items",
       "resourceType": "food",
       "amountRequested": 100,
       "amountAchieved": 50,
+      "unit": "meals",
       "status": "in-progress",
       "priority": "medium",
-      "location": "South District",
+      "locationId": "loc_detroit_relief_center",
       "timeOpened": "2024-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event123"
+      "eventId": "event_detroit_food_2024",
+      "organizationId": "org_detroit_relief",
+      "createdBy": null
     },
     {
-      "id": 3,
+      "id": "ticket_003",
       "title": "Need 25 volunteers to setup tents",
-      "description": "lorem ipsum",
+      "description": "Volunteers needed for tent assembly and setup",
       "resourceType": "labor",
       "amountRequested": 25,
       "amountAchieved": 18,
+      "unit": "volunteers",
       "status": "in-progress",
       "priority": "medium",
-      "location": "South District",
+      "locationId": "loc_aa_fairgrounds",
       "timeOpened": "2024-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event123"
+      "eventId": "event_aa_shelter_2024",
+      "organizationId": "org_aa_relief",
+      "createdBy": null
     }
   ],
-  "accounts": [
+  "users": [
     {
-      "id": 1,
+      "id": "user_001",
       "name": "John Smith",
+      "email": "john.smith@example.com",
+      "organizationId": "org_aa_relief",
       "organization": "Ann Arbor Disaster Relief",
       "role": "Volunteer",
-      "locations": [
-        {
-          "id": 1,
-          "name": "Ann Arbor",
-          "lat": 42.2808,
-          "lon": 83.7430
-        },
-        {
-          "id": 2,
-          "name": "Detroit",
-          "lat": 42.3314,
-          "lon": 83.0458
-        }
-      ]
+      "locationIds": ["loc_ann_arbor", "loc_detroit"],
+      "hasCompletedOnboarding": true
     },
     {
-      "id": 2,
+      "id": "user_002",
       "name": "Jane Doe",
+      "email": "jane.doe@example.com",
+      "organizationId": "org_detroit_relief",
       "organization": "Detroit Relief Org",
       "role": "Admin",
-      "locations": [
-        {
-          "id": 2,
-          "name": "Detroit",
-          "lat": 42.3314,
-          "lon": 83.0458
-        }
-      ]
+      "locationIds": ["loc_detroit"],
+      "hasCompletedOnboarding": true
     }
   ]
 }

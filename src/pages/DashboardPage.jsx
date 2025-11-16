@@ -1,22 +1,38 @@
 // import reactLogo from './assets/react.svg'
 // import viteLogo from '/vite.svg'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { addResourceToFirestore } from "../services/resourceService"
 import SideBar from '../components/SideBar'
 import { PieChart, LineChart, BarChart } from '../components/Charts'
 import data from '../assets/data.json'
 import moment from 'moment';
 import EventCard from '../components/EventCard'
+import { fetchResources, fetchFunding } from '../services/resourceService'
 
 
 function DashboardPage() {
   const navigate = useNavigate()
 
-  const resources = data.resources
-  const funding = data.funding
+  const [resourceLoading, setResourceLoading] = useState(true); // Loading state for data fetching
+  const [fundingLoading, setFundingLoading] = useState(true);
+  const [resources, setResources] = useState(null)
+  const [funding, setFunding] = useState(null)
+
+  // const resources = data.resources
+  // const funding = data.funding
   const events = data.events
   const tickets = data.tickets
+
+  useEffect(() => {
+    fetchResources(setResources, setResourceLoading)
+    fetchFunding(setFunding, setFundingLoading)
+  }, []);
+
+
+  // Show loading page if API data not fetch yet
+  if (resourceLoading || fundingLoading) {
+    return <div>Loading...</div>;
+  }
 
   // Prepare chart data from JSON data
   const barChartData = {
@@ -54,11 +70,13 @@ function DashboardPage() {
       },
     ]
   };
-
+  
   const pageContent = (
     <>
       {/* Heading Section */}
       <h1 className="pl-5 pt-5 text-2xl font-bold text-primary mb-4"> Welcome to Frodo! </h1>
+      {console.log("resources: ")}
+      {console.log(resources[0].type)}
 
       <section className="flex justify-around">
         {/* ProjectTargets */}

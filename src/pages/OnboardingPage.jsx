@@ -1,6 +1,9 @@
 /* Onboarding flow for new users after first login */
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { auth } from '../firebase'
+import { updateUserProfile } from '../services/authService'
+import { getAllOrganizations } from '../services/seedFirestore'
 
 function OnboardingPage() {
 	const navigate = useNavigate()
@@ -9,16 +12,36 @@ function OnboardingPage() {
 	const [selectedOrganization, setSelectedOrganization] = useState('')
 	const [newOrganizationName, setNewOrganizationName] = useState('')
 	const [showNewOrgForm, setShowNewOrgForm] = useState(false)
+	const [loading, setLoading] = useState(false)
+	const [error, setError] = useState(null)
+	const [organizations, setOrganizations] = useState([])
+	const [loadingOrgs, setLoadingOrgs] = useState(false)
 
-	// Mock existing organizations - in real app, fetch from Firestore
-	const existingOrganizations = [
-		'Red Cross',
-		'Doctors Without Borders',
-		'United Way',
-		'Salvation Army',
-		'Habitat for Humanity',
-		'World Vision'
-	]
+	// Fetch organizations from Firestore on component mount
+	useEffect(() => {
+		const fetchOrganizations = async () => {
+			setLoadingOrgs(true)
+			try {
+				const orgs = await getAllOrganizations()
+				setOrganizations(orgs)
+			} catch (err) {
+				console.error('Error fetching organizations:', err)
+				// Fallback to default organizations if Firestore fetch fails
+				setOrganizations([
+					{ id: 'default_1', name: 'Red Cross' },
+					{ id: 'default_2', name: 'Doctors Without Borders' },
+					{ id: 'default_3', name: 'United Way' },
+					{ id: 'default_4', name: 'Salvation Army' },
+					{ id: 'default_5', name: 'Habitat for Humanity' },
+					{ id: 'default_6', name: 'World Vision' }
+				])
+			} finally {
+				setLoadingOrgs(false)
+			}
+		}
+		
+		fetchOrganizations()
+	}, [])
 
 	const handleRoleSelection = (type) => {
 		setUserType(type)
@@ -45,25 +68,27 @@ function OnboardingPage() {
 		})
 	}
 
-	const completeOnboarding = (profileData) => {
+	const completeOnboarding = async (profileData) => {
+		setLoading(true)
+		setError(null)
+		
 		try {
-			// Get existing user data from localStorage
-			const existingUser = JSON.parse(localStorage.getItem('frodo_user'))
+			// Get current user from Firebase Auth
+			const user = auth.currentUser
 			
-			// Add onboarding profile data
-			const updatedUser = {
-				...existingUser,
-				...profileData,
-				hasCompletedOnboarding: true
+			if (!user) {
+				throw new Error('No authenticated user found')
 			}
 			
-			// Save updated user profile
-			localStorage.setItem('frodo_user', JSON.stringify(updatedUser))
+			// Update user profile in Firestore
+			await updateUserProfile(user.uid, profileData)
 			
 			// Navigate to dashboard
 			navigate('/')
-		} catch (error) {
-			console.error('Error completing onboarding:', error)
+		} catch (err) {
+			console.error('Error completing onboarding:', err)
+			setError(err.message || 'Failed to complete onboarding. Please try again.')
+			setLoading(false)
 		}
 	}
 
@@ -73,6 +98,15 @@ function OnboardingPage() {
 				<h2 className="text-2xl font-bold text-base-content mb-2">Welcome to Frodo!</h2>
 				<p className="text-base-content/70">Tell us a bit about yourself to get started</p>
 			</div>
+
+			{error && (
+				<div className="alert alert-error">
+					<svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<span>{error}</span>
+				</div>
+			)}
 
 			<div className="space-y-4">
 				<button
@@ -101,22 +135,37 @@ function OnboardingPage() {
 				<p className="text-base-content/70">Select your organization or create a new one</p>
 			</div>
 
+			{error && (
+				<div className="alert alert-error">
+					<svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
+						<path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<span>{error}</span>
+				</div>
+			)}
+
 			{!showNewOrgForm ? (
 				<div className="space-y-4">
 					<div className="form-control">
 						<label className="label">
 							<span className="label-text">Select your organization</span>
 						</label>
-						<select
-							className="select select-bordered w-full"
-							value={selectedOrganization}
-							onChange={(e) => setSelectedOrganization(e.target.value)}
-						>
-							<option value="">Choose an organization...</option>
-							{existingOrganizations.map((org, index) => (
-								<option key={index} value={org}>{org}</option>
-							))}
-						</select>
+						{loadingOrgs ? (
+							<div className="flex justify-center p-4">
+								<span className="loading loading-spinner loading-md"></span>
+							</div>
+						) : (
+							<select
+								className="select select-bordered w-full"
+								value={selectedOrganization}
+								onChange={(e) => setSelectedOrganization(e.target.value)}
+							>
+								<option value="">Choose an organization...</option>
+								{organizations.map((org) => (
+									<option key={org.id} value={org.name}>{org.name}</option>
+								))}
+							</select>
+						)}
 					</div>
 
 					<div className="divider">OR</div>
@@ -134,9 +183,9 @@ function OnboardingPage() {
 					<button
 						className="btn btn-primary w-full"
 						onClick={handleOrganizationSelection}
-						disabled={!selectedOrganization}
+						disabled={!selectedOrganization || loading}
 					>
-						Continue
+						{loading ? 'Saving...' : 'Continue'}
 					</button>
 				</div>
 			) : (
@@ -161,15 +210,16 @@ function OnboardingPage() {
 								setShowNewOrgForm(false)
 								setNewOrganizationName('')
 							}}
+							disabled={loading}
 						>
 							Back
 						</button>
 						<button
 							className="btn btn-primary flex-1"
 							onClick={handleOrganizationSelection}
-							disabled={!newOrganizationName.trim()}
+							disabled={!newOrganizationName.trim() || loading}
 						>
-							Create & Continue
+							{loading ? 'Creating...' : 'Create & Continue'}
 						</button>
 					</div>
 				</div>

@@ -2,19 +2,44 @@
    Self-contained Firebase setup with role selection and clean UI. */
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { handleGoogleSignIn } from '../services/authService'
-
+import { googleSignIn, updateLastLogin } from '../services/authService'
 
 function LoginPage() {
 	const navigate = useNavigate()
 	const [loading, setLoading] = useState(false)
-	const [error, setError] = useState(false)
+	const [error, setError] = useState(null)
 
-	const onGoogleClick = async () => {
-    	setLoading(true);
-    	await handleGoogleSignIn(navigate);
-    	setLoading(false);
-  	};
+	const handleGoogleSignIn = async () => {
+		setLoading(true)
+		setError(null)
+		
+		try {
+			const result = await googleSignIn()
+			
+			// Check if user cancelled the popup
+			if (result.cancelled) {
+				setLoading(false)
+				return // Exit gracefully without showing error
+			}
+			
+			const { user, isFirstTimeUser } = result
+			
+			// Update last login timestamp
+			await updateLastLogin(user.uid)
+			
+			// Navigate based on onboarding status
+			if (isFirstTimeUser) {
+				navigate('/onboarding')
+			} else {
+				navigate('/')
+			}
+		} catch (err) {
+			console.error('Login error:', err)
+			setError(err.message || 'Failed to sign in. Please try again.')
+		} finally {
+			setLoading(false)
+		}
+	}
 
 	const pageContent = (
 		<div className="flex items-center justify-center min-h-screen bg-base-200 p-4">
@@ -31,7 +56,7 @@ function LoginPage() {
 					<div className="space-y-4">
 						<button
 							className="btn btn-outline w-full h-12 flex items-center justify-center gap-3 text-base normal-case"
-							onClick={onGoogleClick}
+							onClick={handleGoogleSignIn}
 							disabled={loading}
 						>
 							{/* Google icon */}
