@@ -1,7 +1,7 @@
 // https://medium.com/@unosega/to-do-list-web-app-vite-react-and-firebase-3c1798eb28c5
 // https://firebase.google.com/docs/web/setup
 
-import { collection, doc, getDoc, setDoc, updateDoc, addDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, setDoc, updateDoc, addDoc } from "firebase/firestore";
 import { db } from "../firebase";
 
 // Resources
@@ -24,6 +24,7 @@ export const fetchResources = async (setResources, setResourceLoading) => {
     setResourceLoading(false)
 }
 
+
 // Fundings
 export const fetchFunding = async (setFunding, setFundingLoading) => {
     const docSnap = await getDoc(doc(db, "funding", "current"));
@@ -38,12 +39,46 @@ export const fetchFunding = async (setFunding, setFundingLoading) => {
     setFundingLoading(false);
 }
 
+
 // Events
-// export const fetchEvents = async (setEvents, setEventsLoading) => {
+export const fetchEvents = async (setEvents, setEventsLoading) => {
+    try {
+        const docSnap = await getDocs(collection(db, "events"));
+        
+        const events = docSnap.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+    
+        console.log(events);
+        setEvents(events);
+        setEventsLoading(false);
+    } catch (error) {
+        console.error("Error fetching events:", error);
+        setEventsLoading(false);
+    }
 
-// }
+}
 
 
+// Tickets
+export const fetchTickets = async (setTickets, setTicketsLoading) => {
+    try {
+        const docSnap = await getDocs(collection(db, "tickets"))
+
+        const tickets = docSnap.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+        }))
+
+        console.log(tickets)
+        setTickets(tickets)
+        setTicketsLoading(false)
+    } catch (error) {
+        console.error("Error fetching events:", error)
+        setEventsLoading(false)
+    }
+}
 
 
 // User Preferences Functions

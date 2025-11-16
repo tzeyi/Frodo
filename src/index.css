@@ -4,3 +4,15 @@
 #root {
     background-color: base-300
 } */
+
+/* Toast notification animation */
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

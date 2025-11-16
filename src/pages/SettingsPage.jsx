@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react'
 import SideBar from '../components/SideBar'
+import Toast from '../components/Toast'
 import { auth } from '../firebase'
 import { getUserData, signOut } from '../services/authService'
-import { getAllOrganizations, getAllLocations } from '../services/seedFirestore'
+import { getAllOrganizations, getAllLocations, getAllRoles } from '../services/seedFirestore'
 import { getUserPreferences, updateUserPreferences } from '../services/resourceService'
 import { doc, updateDoc } from 'firebase/firestore'
 import { db } from '../firebase'
@@ -16,7 +17,8 @@ function SettingsPage() {
     const [accountForm, setAccountForm] = useState({
         name: '',
         organization: '',
-        role: ''
+        role: '',
+        roleId: ''
     })
     const [selectedLocationId, setSelectedLocationId] = useState(null)
     const [message, setMessage] = useState('')
@@ -29,20 +31,23 @@ function SettingsPage() {
         // pushNotifications: true,
         // emailNotifications: true
     })
+    const [availableRoles, setAvailableRoles] = useState([])
 
-    // Fetch organizations and locations from Firestore
+    // Fetch organizations, locations, and roles from Firestore
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const [orgs, locs] = await Promise.all([
+                const [orgs, locs, roles] = await Promise.all([
                     getAllOrganizations(),
-                    getAllLocations()
+                    getAllLocations(),
+                    getAllRoles()
                 ])
                 setOrganizations(orgs)
                 setAvailableLocations(locs)
+                setAvailableRoles(roles)
             } catch (err) {
                 console.error('Error fetching data:', err)
-                // Fallback to default list if Firestore fetch fails
+                // Fallback to default lists if Firestore fetch fails
                 setOrganizations([
                     { id: 'default_1', name: 'Red Cross' },
                     { id: 'default_2', name: 'Doctors Without Borders' },
@@ -51,6 +56,10 @@ function SettingsPage() {
                     { id: 'default_5', name: 'Habitat for Humanity' },
                     { id: 'default_6', name: 'World Vision' },
                     { id: 'default_7', name: 'Independent' }
+                ])
+                setAvailableRoles([
+                    { id: 'role_volunteer', name: 'Volunteer' },
+                    { id: 'role_admin', name: 'Admin' }
                 ])
             }
         }
@@ -78,7 +87,8 @@ function SettingsPage() {
                     setAccountForm({
                         name: data.name || '',
                         organization: data.organization || '',
-                        role: data.role || ''
+                        role: data.role || '',
+                        roleId: data.roleId || ''
                     })
                     
                     // Initialize location selection if locations exist
@@ -90,8 +100,7 @@ function SettingsPage() {
                 // Set user preferences and apply theme
                 setPreferences(prefs)
                 // Apply theme and broadcast to other pages
-                const resolvedTheme = resolveTheme(prefs.theme)
-                applyAndBroadcastTheme(resolvedTheme)
+                applyAndBroadcastTheme(prefs.theme)
             } catch (err) {
                 console.error('Error fetching user data:', err)
                 setError('Failed to load user data')
@@ -107,27 +116,12 @@ function SettingsPage() {
         return availableLocations.find(loc => loc.id === locationId)
     }
 
-    // Resolve 'auto' theme to actual theme based on system preference
-    const resolveTheme = (theme) => {
-        if (theme === 'auto') {
-            const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-            return prefersDark ? 'dark' : 'light'
-        }
-        return theme
-    }
-
     // Apply theme locally and broadcast to all pages
     const applyAndBroadcastTheme = (theme) => {
         // Broadcast to App.jsx and other listeners
         window.dispatchEvent(new CustomEvent('themeChanged', { 
             detail: { theme } 
         }))
-    }
-
-    const applyTheme = (theme) => {
-        const resolvedTheme = resolveTheme(theme)
-        const html = document.documentElement
-        html.setAttribute('data-theme', resolvedTheme)
     }
 
     const handleThemeChange = async (newTheme) => {
@@ -140,19 +134,15 @@ function SettingsPage() {
             setPreferences(updatedPrefs)
             
             // Apply theme locally and broadcast to other pages
-            const resolvedTheme = resolveTheme(newTheme)
-            applyTheme(newTheme)
-            applyAndBroadcastTheme(resolvedTheme)
+            applyAndBroadcastTheme(newTheme)
             
             // Save to Firestore
             await updateUserPreferences(user.uid, { theme: newTheme })
             
             setMessage('Theme updated successfully')
-            setTimeout(() => setMessage(''), 3000)
         } catch (err) {
             console.error('Error updating theme:', err)
             setError('Failed to update theme')
-            setTimeout(() => setError(''), 3000)
         }
     }
 
@@ -196,6 +186,7 @@ function SettingsPage() {
                 name: accountForm.name,
                 organization: accountForm.organization,
                 role: accountForm.role,
+                roleId: accountForm.roleId,
                 lastUpdated: new Date().toISOString()
             })
             
@@ -204,16 +195,15 @@ function SettingsPage() {
                 ...userData,
                 name: accountForm.name,
                 organization: accountForm.organization,
-                role: accountForm.role
+                role: accountForm.role,
+                roleId: accountForm.roleId
             })
             
             setEditingAccount(false)
             setMessage('Account settings saved successfully')
-            setTimeout(() => setMessage(''), 3000)
         } catch (err) {
             console.error('Error saving account:', err)
             setError('Failed to save account settings')
-            setTimeout(() => setError(''), 5000)
         } finally {
             setLoading(false)
         }
@@ -234,7 +224,6 @@ function SettingsPage() {
             
             if (locationExists) {
                 setError('This location is already in your list')
-                setTimeout(() => setError(''), 3000)
                 setLoading(false)
                 return
             }
@@ -263,11 +252,9 @@ function SettingsPage() {
             setSelectedNewLocationId('')
             setEditingLocation(false)
             setMessage('Location added successfully')
-            setTimeout(() => setMessage(''), 3000)
         } catch (err) {
             console.error('Error saving location:', err)
             setError('Failed to save location')
-            setTimeout(() => setError(''), 5000)
         } finally {
             setLoading(false)
         }
@@ -313,11 +300,9 @@ function SettingsPage() {
             }
             
             setMessage('Location deleted')
-            setTimeout(() => setMessage(''), 3000)
         } catch (err) {
             console.error('Error deleting location:', err)
             setError('Failed to delete location')
-            setTimeout(() => setError(''), 5000)
         } finally {
             setLoading(false)
         }
@@ -337,7 +322,6 @@ function SettingsPage() {
         } catch (err) {
             console.error('Error signing out:', err)
             setError('Failed to sign out')
-            setTimeout(() => setError(''), 3000)
         }
     }
 
@@ -367,37 +351,25 @@ function SettingsPage() {
 
     const pageContent = (
         <>
+        {/* Toast Notifications */}
+        <Toast 
+            message={message} 
+            type="success" 
+            onClose={() => setMessage('')}
+        />
+        <Toast 
+            message={error} 
+            type="error" 
+            onClose={() => setError('')}
+        />
+
         {/* Header */}
-        <h1 className="p-5 text-3xl font-bold text-primary">Settings</h1>
-        
-        {/* Success Message */}
-        {message && (
-            <div className="px-5">
-                <div className="alert alert-success">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{message}</span>
-                </div>
-            </div>
-        )}
-        
-        {/* Error Message */}
-        {error && (
-            <div className="px-5">
-                <div className="alert alert-error">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span>{error}</span>
-                </div>
-            </div>
-        )}
+        <h1 className="px-5 pt-5 pb-2 text-3xl font-bold text-primary">Settings</h1>
 
         {/* Account Settings Section */}
-        <section className="p-5">
+        <section className="px-5 pt-2 pb-5">
             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
+                <div className="card-body p-8">
                     <h2 className="card-title text-xl mb-4">Account Settings</h2>
                     
                     {!editingAccount ? (
@@ -476,12 +448,23 @@ function SettingsPage() {
                                     <label className="label">
                                         <span className="label-text font-semibold">Role</span>
                                     </label>
-                                    <input 
-                                        type="text"
-                                        className="input input-bordered"
+                                    <select 
+                                        className="select select-bordered"
                                         value={accountForm.role}
-                                        onChange={(e) => setAccountForm({...accountForm, role: e.target.value})}
-                                    />
+                                        onChange={(e) => {
+                                            const selectedRole = availableRoles.find(role => role.name === e.target.value)
+                                            setAccountForm({
+                                                ...accountForm, 
+                                                role: e.target.value,
+                                                roleId: selectedRole ? selectedRole.id : ''
+                                            })
+                                        }}
+                                    >
+                                        <option value="">Select role...</option>
+                                        {availableRoles.map((role) => (
+                                            <option key={role.id} value={role.name}>{role.name}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
                             
@@ -493,7 +476,8 @@ function SettingsPage() {
                                         setAccountForm({
                                             name: userData.name,
                                             organization: userData.organization,
-                                            role: userData.role
+                                            role: userData.role,
+                                            roleId: userData.roleId || ''
                                         })
                                     }}
                                 >
@@ -514,9 +498,9 @@ function SettingsPage() {
         </section>
 
         {/* Location Settings Section */}
-        <section className="p-5">
+        <section className="px-5 pt-2 pb-5">
             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
+                <div className="card-body p-8">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="card-title text-xl">Location Settings</h2>
                         {userData.locations && userData.locations.length > 0 && (
@@ -534,19 +518,63 @@ function SettingsPage() {
                     </div>
                     
                     {!userData.locations || userData.locations.length === 0 ? (
-                        <div className="text-center py-8">
-                            <p className="text-base-content/60 mb-4">No locations added yet</p>
-                            <button 
-                                className="btn btn-primary"
-                                onClick={handleAddLocation}
-                                disabled={loading}
-                            >
-                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                                </svg>
-                                Add Your First Location
-                            </button>
-                        </div>
+                        <>
+                            {!editingLocation ? (
+                                <div className="text-center py-8">
+                                    <p className="text-base-content/60 mb-4">No locations added yet</p>
+                                    <button 
+                                        className="btn btn-primary"
+                                        onClick={handleAddLocation}
+                                        disabled={loading}
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+                                        </svg>
+                                        Add Your First Location
+                                    </button>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className="form-control">
+                                        <label className="label">
+                                            <span className="label-text font-semibold">Select a Location to Add</span>
+                                        </label>
+                                        <select 
+                                            className="select select-bordered"
+                                            value={selectedNewLocationId}
+                                            onChange={(e) => setSelectedNewLocationId(e.target.value)}
+                                        >
+                                            <option value="">Choose from available locations...</option>
+                                            {availableLocations.map((location) => (
+                                                <option key={location.id} value={location.id}>
+                                                    {location.name} ({location.lat.toFixed(4)}, {location.lon.toFixed(4)})
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                    
+                                    <div className="card-actions justify-end mt-4 gap-2">
+                                        <button 
+                                            className="btn btn-ghost"
+                                            onClick={() => {
+                                                setEditingLocation(false)
+                                                setSelectedNewLocationId('')
+                                            }}
+                                            disabled={loading}
+                                        >
+                                            Cancel
+                                        </button>
+                                        <button 
+                                            className="btn btn-primary"
+                                            onClick={handleLocationSave}
+                                            disabled={loading || !selectedNewLocationId}
+                                        >
+                                            {loading ? 'Adding...' : 'Add Location'}
+                                        </button>
+                                    </div>
+                                </>
+                            )}
+                        </>
                     ) : (
                         <>
                             {/* Location Selector */}
@@ -670,9 +698,9 @@ function SettingsPage() {
         </section>
 
         {/* App Preferences Section */}
-        <section className="p-5">
+        <section className="px-5 pt-2 pb-5">
             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
+                <div className="card-body p-8">
                     <h2 className="card-title text-xl mb-4">App Preferences</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -692,12 +720,6 @@ function SettingsPage() {
                                     onClick={() => handleThemeChange('dark')}
                                 >
                                     Dark
-                                </button>
-                                <button 
-                                    className={`btn btn-sm join-item ${preferences.theme === 'auto' ? 'btn-active' : ''}`}
-                                    onClick={() => handleThemeChange('auto')}
-                                >
-                                    Auto
                                 </button>
                             </div>
                         </div>
@@ -733,9 +755,9 @@ function SettingsPage() {
         </section>
 
         {/* Account Actions Section */}
-        <section className="p-5">
+        <section className="px-5 pt-2 pb-5">
             <div className="card bg-base-100 shadow-xl">
-                <div className="card-body">
+                <div className="card-body p-8">
                     <h2 className="card-title text-xl mb-4">Account Actions</h2>
                     
                     <div className="flex flex-col gap-4">

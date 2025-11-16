@@ -10,17 +10,8 @@ export const initializeTheme = () => {
   if (themeInitialized) return;
   themeInitialized = true;
 
-  const resolveTheme = (theme) => {
-    if (theme === 'auto') {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      return prefersDark ? 'dark' : 'light';
-    }
-    return theme;
-  };
-
   const applyTheme = (theme) => {
-    const resolvedTheme = resolveTheme(theme);
-    document.documentElement.setAttribute('data-theme', resolvedTheme);
+    document.documentElement.setAttribute('data-theme', theme);
   };
 
   // Load theme as soon as user auth state is known

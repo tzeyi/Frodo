@@ -10,6 +10,7 @@ function OnboardingPage() {
 	const [step, setStep] = useState('role') // 'role', 'organization'
 	const [userType, setUserType] = useState(null)
 	const [selectedOrganization, setSelectedOrganization] = useState('')
+	const [selectedOrganizationId, setSelectedOrganizationId] = useState('')
 	const [newOrganizationName, setNewOrganizationName] = useState('')
 	const [showNewOrgForm, setShowNewOrgForm] = useState(false)
 	const [loading, setLoading] = useState(false)
@@ -64,6 +65,7 @@ function OnboardingPage() {
 		completeOnboarding({
 			userType: 'organization',
 			organizationName: orgName,
+			organizationId: selectedOrganizationId || null,
 			isNewOrg: showNewOrgForm
 		})
 	}
@@ -110,19 +112,21 @@ function OnboardingPage() {
 
 			<div className="space-y-4">
 				<button
-					className="btn btn-outline w-full h-16 flex flex-col items-center justify-center gap-2 text-left normal-case hover:btn-primary"
+					className="btn btn-outline w-full h-auto py-4 flex flex-col items-start justify-center gap-1 text-left normal-case hover:btn-primary"
 					onClick={() => handleRoleSelection('organization')}
 				>
 					<div className="font-semibold">I'm part of an NGO or volunteer organization</div>
 					<div className="text-sm opacity-60">I represent or work with an established organization</div>
+					<div className="badge badge-primary badge-sm mt-1">Will be assigned Admin role</div>
 				</button>
 
 				<button
-					className="btn btn-outline w-full h-16 flex flex-col items-center justify-center gap-2 text-left normal-case hover:btn-primary"
+					className="btn btn-outline w-full h-auto py-4 flex flex-col items-start justify-center gap-1 text-left normal-case hover:btn-primary"
 					onClick={() => handleRoleSelection('independent')}
 				>
 					<div className="font-semibold">I'm an independent volunteer</div>
 					<div className="text-sm opacity-60">I want to help but I'm not affiliated with any organization</div>
+					<div className="badge badge-secondary badge-sm mt-1">Will be assigned Volunteer role</div>
 				</button>
 			</div>
 		</div>
@@ -158,7 +162,12 @@ function OnboardingPage() {
 							<select
 								className="select select-bordered w-full"
 								value={selectedOrganization}
-								onChange={(e) => setSelectedOrganization(e.target.value)}
+								onChange={(e) => {
+									setSelectedOrganization(e.target.value)
+									// Find and store the organization ID
+									const org = organizations.find(o => o.name === e.target.value)
+									setSelectedOrganizationId(org?.id || '')
+								}}
 							>
 								<option value="">Choose an organization...</option>
 								{organizations.map((org) => (

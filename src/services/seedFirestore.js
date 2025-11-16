@@ -13,6 +13,7 @@ export const seedAllData = async () => {
 		console.log('🌱 Starting Firestore data seeding...')
 		
 		await seedLocations()
+		await seedRoles()
 		await seedOrganizations()
 		await seedEvents()
 		await seedTickets()
@@ -48,6 +49,31 @@ export const seedLocations = async () => {
 		return { success: true, count: mockData.locations.length }
 	} catch (error) {
 		console.error('Error seeding locations:', error)
+		throw error
+	}
+}
+
+/**
+ * Seed roles collection
+ */
+export const seedRoles = async () => {
+	try {
+		console.log('👤 Seeding roles...')
+		const batch = writeBatch(db)
+		
+		mockData.roles.forEach((role) => {
+			const roleRef = doc(db, 'roles', role.id)
+			batch.set(roleRef, {
+				...role,
+				createdAt: new Date().toISOString()
+			})
+		})
+		
+		await batch.commit()
+		console.log(`✅ Seeded ${mockData.roles.length} roles`)
+		return { success: true, count: mockData.roles.length }
+	} catch (error) {
+		console.error('Error seeding roles:', error)
 		throw error
 	}
 }
@@ -178,7 +204,7 @@ export const clearAllData = async () => {
 	try {
 		console.log('🗑️  Clearing all seeded data...')
 		
-		const collections = ['locations', 'organizations', 'events', 'tickets', 'resources', 'funding']
+		const collections = ['locations', 'roles', 'organizations', 'events', 'tickets', 'resources', 'funding']
 		
 		for (const collectionName of collections) {
 			const snapshot = await getDocs(collection(db, collectionName))
@@ -207,7 +233,7 @@ export const clearAllData = async () => {
  */
 export const checkDataExists = async () => {
 	try {
-		const collections = ['locations', 'organizations', 'events', 'tickets']
+		const collections = ['locations', 'roles', 'organizations', 'events', 'tickets']
 		const status = {}
 		
 		for (const collectionName of collections) {
@@ -260,6 +286,19 @@ export const getAllOrganizations = async () => {
 		return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
 	} catch (error) {
 		console.error('Error getting organizations:', error)
+		throw error
+	}
+}
+
+/**
+ * Get all roles
+ */
+export const getAllRoles = async () => {
+	try {
+		const snapshot = await getDocs(collection(db, 'roles'))
+		return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
+	} catch (error) {
+		console.error('Error getting roles:', error)
 		throw error
 	}
 }

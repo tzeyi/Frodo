@@ -2,6 +2,7 @@ import { db } from "../firebase";
 import { doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 import { auth} from '../firebase'
 import { GoogleAuthProvider, signInWithRedirect, signInWithPopup, signOut as firebaseSignOut } from 'firebase/auth'
+import { getAllOrganizations } from './seedFirestore'
 
 
 /**
@@ -55,19 +56,58 @@ export const googleSignIn = async () => {
 export const createUserDocument = async (user) => {
 	try {
 		const userRef = doc(db, 'users', user.uid)
+		const email = (user.email || '').toLowerCase()
+
+		// Default values for independent volunteers
+		let assignedOrganization = null
+		let assignedOrganizationId = null
+		let assignedRole = 'Volunteer'
+		let assignedRoleId = 'role_volunteer'
+
+		// Try to determine if the user belongs to an NGO or volunteer organization by email domain
+		try {
+			const orgs = await getAllOrganizations()
+			const domain = email.split('@')[1]
+			
+			if (domain) {
+				// Match user to organization by email domain
+				const matched = orgs.find(o => {
+					const orgEmail = (o.contact && o.contact.email) ? o.contact.email.toLowerCase() : ''
+					const orgDomain = orgEmail.split('@')[1]
+					
+					// Match if user's domain matches organization's email domain
+					return orgDomain && domain === orgDomain
+				})
+				
+				if (matched) {
+					// User is part of an NGO/volunteer organization -> assign Admin role
+					assignedOrganization = matched.name || null
+					assignedOrganizationId = matched.id || null
+					assignedRole = 'Admin'
+					assignedRoleId = 'role_admin'
+				}
+				// If no match found, user remains as independent Volunteer (default values above)
+			}
+		} catch (err) {
+			// If organization lookup fails, fall back to default role (independent volunteer)
+			console.warn('Could not determine organization for user:', err)
+		}
+
 		const userData = {
 			id: user.uid,
 			name: user.displayName || '',
-			email: user.email || '',
+			email: email,
 			photoURL: user.photoURL || '',
-			organization: null,
-			role: 'Volunteer', // Default role
+			organization: assignedOrganization,
+			organizationId: assignedOrganizationId,
+			role: assignedRole,
+			roleId: assignedRoleId,
 			locations: [],
 			hasCompletedOnboarding: false,
 			createdAt: new Date().toISOString(),
 			lastLogin: new Date().toISOString()
 		}
-		
+
 		await setDoc(userRef, userData)
 		return userData
 	} catch (error) {

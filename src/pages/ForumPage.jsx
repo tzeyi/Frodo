@@ -8,7 +8,8 @@ import {
   BiCollection, 
   BiMessageCheck, 
   BiMessageError, 
-  BiMessageDetail
+  BiMessageDetail,
+  BiArrowBack
 } from 'react-icons/bi'
 
 // Mock data (no changes)
@@ -54,7 +55,7 @@ const mockPosts = [
   },
 ]
 
-// --- Reusable Stat Card Component ---
+// --- Reusable Stat Card Component (no changes) ---
 const StatCard = ({ title, value, icon, colorClass }) => (
   <div className="card bg-base-100 shadow-md">
     <div className="card-body p-4">
@@ -71,9 +72,8 @@ const StatCard = ({ title, value, icon, colorClass }) => (
   </div>
 );
 
-// --- 1. NEW DASHBOARD COMPONENT ---
+// --- ForumDashboard Component (no changes) ---
 const ForumDashboard = ({ posts, onSelectPost }) => {
-  // Calculate statistics
   const openPosts = posts.filter(p => p.status === 'open');
   const postsNeedingReply = posts.filter(p => p.replies.length === 0 && p.status !== 'closed');
   const totalPosts = posts.length;
@@ -84,7 +84,6 @@ const ForumDashboard = ({ posts, onSelectPost }) => {
     <div className="p-6 h-full">
       <h2 className="text-2xl font-bold mb-6">Forum at a Glance</h2>
       
-      {/* Top status cards */}
       {allCaughtUp ? (
         <div className="alert alert-success shadow-lg mb-6">
           <BiMessageCheck className="h-6 w-6" />
@@ -99,13 +98,12 @@ const ForumDashboard = ({ posts, onSelectPost }) => {
         </div>
       )}
 
-      {/* Grid of stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <StatCard
           title="Open Posts"
           value={openPosts.length}
           icon={<BiMessageError className="h-5 w-5" />}
-          colorClass="bg-error/20 text-error"
+          colorClass="bg-success/20 text-success" 
         />
         <StatCard
           title="Posts Needing Reply"
@@ -125,7 +123,6 @@ const ForumDashboard = ({ posts, onSelectPost }) => {
         />
       </div>
       
-      {/* List of posts needing attention */}
       {postsNeedingReply.length > 0 && (
         <div className="mt-6">
           <h3 className="font-bold mb-2">Posts Needing Reply</h3>
@@ -150,7 +147,7 @@ const ForumDashboard = ({ posts, onSelectPost }) => {
 };
 
 
-// --- ReplySection Component (no changes) ---
+// --- ReplySection Component (Updated) ---
 const ReplySection = ({ post, onAddReply }) => {
   const [replyText, setReplyText] = useState('');
 
@@ -165,6 +162,7 @@ const ReplySection = ({ post, onAddReply }) => {
   return (
     <div className="mt-6">
       <div className="divider">Replies ({post.replies.length})</div>
+      
       <div className="space-y-4">
         {post.replies.map(reply => (
           <div key={reply.id} className="card bg-base-200 shadow-sm">
@@ -188,11 +186,11 @@ const ReplySection = ({ post, onAddReply }) => {
           <p className="text-sm text-center text-base-content/60">No replies yet.</p>
         )}
       </div>
+
       <form onSubmit={handleSubmit} className="mt-6">
+        {/* --- 1. Replaced <label> with <p> and added mb-3 --- */}
         <div className="form-control">
-          <label className="label">
-            <span className="label-text font-semibold">Post a Reply</span>
-          </label>
+          <p className="label-text font-semibold mb-3">Post a Reply</p>
           <textarea
             className="textarea textarea-bordered h-24"
             placeholder="Write your reply..."
@@ -200,7 +198,7 @@ const ReplySection = ({ post, onAddReply }) => {
             onChange={(e) => setReplyText(e.target.value)}
           ></textarea>
         </div>
-        <div className="modal-action">
+        <div className="modal-action mt-4">
           <button type="submit" className="btn btn-primary">
             <BiCommentDots className="mr-2" />
             Post Reply
@@ -227,25 +225,23 @@ function ForumPage() {
     );
   };
 
-  // --- BUG FIX ---
-  // Updated handleCreatePost to use `replies: []`
   const handleCreatePost = (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
     const newPost = {
-      id: new Date().getTime(), // Use timestamp for more unique ID
+      id: new Date().getTime(), 
       title: formData.get('title'),
       author: 'CurrentUser', 
       authorAvatar: 'U',
       date: new Date().toISOString().split('T')[0],
       status: formData.get('status') || 'open',
       content: formData.get('message'),
-      replies: [] // New posts start with an empty replies array
+      replies: [] 
     }
     setPosts([newPost, ...posts])
     document.getElementById('new_post_modal').close()
     e.target.reset()
-    setSelectedPost(newPost); // Automatically select the new post
+    setSelectedPost(newPost); 
   }
 
   const handleAddReply = (postId, replyContent) => {
@@ -271,10 +267,21 @@ function ForumPage() {
     setSelectedPost(updatedPost); 
   };
 
-  // This is the reusable component for viewing a post
-  const PostViewer = ({ post, isModal }) => (
+  // --- PostViewer Component (no changes) ---
+  const PostViewer = ({ post, isModal, onBack }) => (
     <>
-      <h3 className="font-bold text-lg">{post.title}</h3>
+      <div className="flex items-center gap-2">
+        {!isModal && (
+          <button 
+            onClick={onBack} 
+            className="btn btn-ghost btn-circle btn-sm"
+            aria-label="Back to forum glance"
+          >
+            <BiArrowBack className="h-5 w-5" />
+          </button>
+        )}
+        <h3 className="font-bold text-lg">{post.title}</h3>
+      </div>
       
       <div className="py-4">
         <div className="flex flex-wrap items-center gap-4 text-sm opacity-70 mb-4 border-b pb-4">
@@ -282,7 +289,6 @@ function ForumPage() {
           <div className="flex items-center gap-1"><BiTime /> {post.date}</div>
           <div className="flex items-center gap-2">
             <span className="font-semibold text-base-content/70">Status:</span>
-            {/* --- COLOR FIX --- */}
             <span
               className={`badge ${
                 post.status === 'open'
@@ -329,7 +335,7 @@ function ForumPage() {
         )}
 
         {isModal && (
-          <button className="btn btn-ghost" onClick={() => setSelectedPost(null)}>
+          <button className="btn btn-ghost" onClick={onBack}>
             Close
           </button>
         )}
@@ -337,9 +343,9 @@ function ForumPage() {
     </>
   );
 
+  // --- pageContent (no changes) ---
   const pageContent = (
     <div className="flex flex-col h-screen">
-      {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:justify-between md:items-center p-5 border-b border-base-300">
         <h1 className="text-3xl font-bold text-primary">Forum</h1>
         <button 
@@ -351,10 +357,8 @@ function ForumPage() {
         </button>
       </div>
 
-      {/* Main Content Area */}
       <div className="flex-grow flex overflow-hidden">
         
-        {/* Left Column: Post List */}
         <div className="w-full md:w-1/3 lg:w-2/5 border-r border-base-300 overflow-y-auto">
           <div className="space-y-2 p-2">
             {posts.map((post) => {
@@ -370,7 +374,6 @@ function ForumPage() {
                   <div className="card-body p-4">
                     <div className="flex justify-between items-start">
                       <h3 className="card-title text-base font-bold">{post.title}</h3>
-                      {/* --- COLOR FIX --- */}
                       <div
                         className={`badge badge-sm ${
                           post.status === 'open'
@@ -403,12 +406,14 @@ function ForumPage() {
           </div>
         </div>
 
-        {/* Right Column: Post Viewer (Desktop) */}
         <div className="hidden md:block md:w-2/3 lg:w-3/5 overflow-y-auto">
-          {/* --- 2. DASHBOARD INTEGRATION --- */}
           {selectedPost ? (
             <div className="p-6">
-              <PostViewer post={selectedPost} isModal={false} />
+              <PostViewer 
+                post={selectedPost} 
+                isModal={false} 
+                onBack={() => setSelectedPost(null)} 
+              />
             </div>
           ) : (
             <ForumDashboard posts={posts} onSelectPost={setSelectedPost} />
@@ -416,11 +421,14 @@ function ForumPage() {
         </div>
       </div>
 
-      {/* Mobile Modal Viewer */}
       {selectedPost && (
         <dialog className="modal modal-open md:hidden">
           <div className="modal-box w-11/12 max-w-5xl">
-            <PostViewer post={selectedPost} isModal={true} />
+            <PostViewer 
+              post={selectedPost} 
+              isModal={true} 
+              onBack={() => setSelectedPost(null)}
+            />
           </div>
           <form method="dialog" className="modal-backdrop">
             <button onClick={() => setSelectedPost(null)}>close</button>
@@ -428,26 +436,31 @@ function ForumPage() {
         </dialog>
       )}
 
-      {/* New Post Modal */}
+      {/* --- New Post Modal (Updated) --- */}
       <dialog id="new_post_modal" className="modal modal-bottom sm:modal-middle">
         <div className="modal-box">
           <h3 className="font-bold text-lg">Create New Forum Post</h3>
           <form onSubmit={handleCreatePost}>
-            <div className="space-y-4 py-4">
+            <div className="space-y-6 p-6">
+              {/* --- 2. Replaced <label> with <p> and added mb-3 --- */}
               <div className="form-control">
-                <label className="label"><span className="label-text">Title</span></label>
+                <p className="label-text font-semibold mb-3">Title</p>
                 <input type="text" name="title" className="input input-bordered" placeholder="Enter post title" required />
               </div>
+              
+              {/* --- 2. Replaced <label> with <p> and added mb-3 --- */}
               <div className="form-control">
-                <label className="label"><span className="label-text">Status</span></label>
+                <p className="label-text font-semibold mb-3">Status</p>
                 <select name="status" className="select select-bordered" defaultValue="open">
                   <option value="open">Open</option>
                   <option value="in-progress">In Progress</option>
                   <option value="closed">Closed</option>
                 </select>
               </div>
+              
+              {/* --- 2. Replaced <label> with <p> and added mb-3 --- */}
               <div className="form-control">
-                <label className="label"><span className="label-text">Message</span></label>
+                <p className="label-text font-semibold mb-3">Message</p>
                 <textarea name="message" className="textarea textarea-bordered" rows="5" placeholder="Write your post..." required></textarea>
               </div>
             </div>

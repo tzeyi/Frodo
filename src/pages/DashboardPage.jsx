@@ -7,30 +7,37 @@ import { PieChart, LineChart, BarChart } from '../components/Charts'
 import data from '../assets/data.json'
 import moment from 'moment';
 import EventCard from '../components/EventCard'
-import { fetchResources, fetchFunding } from '../services/resourceService'
+import { fetchResources, fetchFunding, fetchEvents, fetchTickets } from '../services/resourceService'
 
 
 function DashboardPage() {
   const navigate = useNavigate()
 
-  const [resourceLoading, setResourceLoading] = useState(true); // Loading state for data fetching
-  const [fundingLoading, setFundingLoading] = useState(true);
+  const [resourceLoading, setResourceLoading] = useState(true) // Loading state for data fetching
+  const [fundingLoading, setFundingLoading] = useState(true)
+  const [eventsLoading, setEventsLoading] = useState(true)
+  const [ticketsLoading, setTicketsLoading] = useState(true)
+
   const [resources, setResources] = useState(null)
   const [funding, setFunding] = useState(null)
+  const [events, setEvents] = useState(null)
+  const [tickets, setTickets] = useState(null)
 
   // const resources = data.resources
   // const funding = data.funding
-  const events = data.events
-  const tickets = data.tickets
+  // const events = data.events
+  // const tickets = data.tickets
 
   useEffect(() => {
     fetchResources(setResources, setResourceLoading)
     fetchFunding(setFunding, setFundingLoading)
+    fetchEvents(setEvents, setEventsLoading)
+    fetchTickets(setTickets, setTicketsLoading)
   }, []);
 
 
   // Show loading page if API data not fetch yet
-  if (resourceLoading || fundingLoading) {
+  if (resourceLoading || fundingLoading || eventsLoading || ticketsLoading) {
     return <div>Loading...</div>;
   }
 
@@ -131,8 +138,13 @@ function DashboardPage() {
                     max="100"
                   ></progress>
                   <div className="flex justify-between text-sm">
-                    <span className="opacity-70">Acquired: <span className="font-semibold text-base-content">$32,500</span></span>
-                    <span className="opacity-70">Target: <span className="font-semibold text-base-content">$60,000</span></span>
+                    <span className="opacity-70">Acquired: <span className="font-semibold text-base-content"> 
+                      ${funding.totalAcquired}
+                    </span></span>
+                    <span className="opacity-70">Target: <span className="font-semibold text-base-content">
+                      ${funding.target}
+                      {/* 60,000 */}
+                      </span></span>
                   </div>
                 </div>
               </div>

@@ -125,7 +125,7 @@
   "funding": {
     "totalAcquired": 25000,
     "totalUsed": 18000,
-    "remaining": 7000
+    "target": 30000
   },
   "events": [
     {
@@ -224,6 +224,103 @@
       "role": "Admin",
       "locationIds": ["loc_detroit"],
       "hasCompletedOnboarding": true
+    }
+  ],
+  "roles": [
+    {
+      "id": "role_volunteer",
+      "name": "Volunteer",
+      "description": "General volunteer helping with relief efforts",
+      "permissions": ["view_events", "view_tickets", "create_tickets"]
+    },
+    {
+      "id": "role_admin",
+      "name": "Admin",
+      "description": "Administrator with full access to manage organization",
+      "permissions": ["view_events", "view_tickets", "create_tickets", "manage_events", "manage_users", "manage_resources"]
+    }
+  ], 
+  "posts": [
+    {
+      "id": 1,
+      "title": "Welcome to the Forum!",
+      "author": "Admin",
+      "authorAvatar": "A",
+      "date": "2025-11-15",
+      "status": "closed",
+      "content": "Welcome everyone! This is the place for general discussion, questions, and coordinating efforts.\n\nPlease be respectful and keep discussions on topic.",
+      "replies": [
+        {
+          "id": 101,
+          "author": "JaneD",
+          "authorAvatar": "J",
+          "date": "2025-11-15",
+          "content": "Great to be here!"
+        },
+        {
+          "id": 102,
+          "author": "MikeB",
+          "authorAvatar": "M",
+          "date": "2025-11-16",
+          "content": "Thanks for setting this up."
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Need volunteers for upcoming food drive",
+      "author": "ProjectCoordinator",
+      "authorAvatar": "P",
+      "date": "2025-11-14",
+      "status": "in-progress",
+      "content": "We are organizing a food drive next weekend at the community center. We need 10 volunteers for sorting and distribution.\n\nSign-ups are here: [link]",
+      "replies": [
+        {
+          "id": 103,
+          "author": "Volunteer1",
+          "authorAvatar": "V",
+          "date": "2025-11-14",
+          "content": "I can help on Saturday!"
+        },
+        {
+          "id": 104,
+          "author": "MikeB",
+          "authorAvatar": "M",
+          "date": "2025-11-15",
+          "content": "I'll bring a friend."
+        },
+        {
+          "id": 105,
+          "author": "JaneD",
+          "authorAvatar": "J",
+          "date": "2025-11-15",
+          "content": "What time do you need people?"
+        },
+        {
+          "id": 106,
+          "author": "ProjectCoordinator",
+          "authorAvatar": "P",
+          "date": "2025-11-15",
+          "content": "@JaneD 9am to 3pm."
+        },
+        {
+          "id": 107,
+          "author": "MikeB",
+          "authorAvatar": "M",
+          "date": "2025-11-16",
+          "content": "Count me in for 9am."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Request: Blankets and warm clothes",
+      "author": "ShelterManager",
+      "authorAvatar": "S",
+      "date": "2025-11-13",
+      "status": "open",
+      "content": "Our shelter is running low on blankets and warm clothing for the winter season. Donations can be dropped off at our main location.",
+      "replies": []
     }
   ]
 }
