@@ -46,7 +46,161 @@ const STATUS_FILTERS = {
   IN_PROGRESS: 'in-progress',
   CLOSED: 'closed'
 }
+/* Place this OUTSIDE and ABOVE the main ForumPage function */
+const PostViewer = ({ 
+  post, 
+  isModal, 
+  onBack, 
+  // We must now pass these in as props since we can't access them directly anymore
+  user, 
+  replies, 
+  replyText, 
+  setReplyText, 
+  handleAddReply, 
+  handleEditPost, 
+  handleUpdateStatus, 
+  submitting, 
+  setSelectedPost 
+}) => {
+  
+  // Helper function moved inside the new component
+  const canClosePost = (post) => {
+    return user && post.authorId === user.uid
+  }
 
+  return (
+    <>
+      {!isModal && (
+        <button
+          className="btn btn-sm btn-ghost mb-4"
+          onClick={() => setSelectedPost(null)}
+        >
+          ← Back to Home
+        </button>
+      )}
+      <div className="flex items-center gap-2 mb-4">
+        <h3 className="font-bold text-lg flex-1">{post.title}</h3>
+        {canClosePost(post) && (
+          <button
+            className="btn btn-sm btn-ghost"
+            onClick={() => handleEditPost(post)}
+          >
+            <BiEdit className="h-4 w-4" />
+          </button>
+        )}
+        <div
+          className={`badge ${
+            post.status === 'open'
+              ? 'badge-success'
+              : post.status === 'in-progress'
+              ? 'badge-warning'
+              : 'badge-error'
+          }`}
+        >
+          {post.status}
+        </div>
+      </div>
+      
+      <div className="py-4">
+        <div className="flex flex-wrap items-center gap-4 text-sm opacity-70 mb-4 border-b pb-4">
+          <div className="flex items-center gap-1">
+            <BiUser /> {post.authorName}
+          </div>
+          <div className="flex items-center gap-1">
+            <BiTime /> {moment(post.createdAt).fromNow()}
+          </div>
+        </div>
+        
+        <p className="text-base-content/90 whitespace-pre-wrap break-words overflow-wrap-anywhere mb-6">{post.content}</p>
+        
+        {/* Replies Section */}
+        <div className="mt-6">
+          <div className="divider">Replies ({replies.length})</div>
+          
+          <div className="space-y-4">
+            {replies.map(reply => (
+              <div key={reply.id} className="card bg-base-200 shadow-sm">
+                <div className="card-body p-4">
+                  <div className="flex items-center gap-3">
+                    <div className="avatar placeholder">
+                      <div className="bg-neutral-focus text-neutral-content rounded-full w-8">
+                        <span>{reply.authorName?.charAt(0) || 'U'}</span>
+                      </div>
+                    </div>
+                    <div>
+                      <span className="font-semibold">{reply.authorName}</span>
+                      <span className="text-xs text-base-content/70 ml-2">
+                        {moment(reply.createdAt).fromNow()}
+                      </span>
+                    </div>
+                  </div>
+                  <p className="text-base-content/90 mt-2 ml-11 whitespace-pre-wrap break-words">{reply.content}</p>
+                </div>
+              </div>
+            ))}
+            {replies.length === 0 && (
+              <p className="text-sm text-center text-base-content/60">No replies yet.</p>
+            )}
+          </div>
+
+          {/* Reply Form */}
+          <form onSubmit={handleAddReply} className="mt-6">
+            <div className="form-control">
+              <p className="label-text font-semibold mb-3">Post a Reply</p>
+              <textarea
+                className="textarea textarea-bordered h-24"
+                placeholder="Write your reply..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                disabled={submitting}
+              ></textarea>
+            </div>
+            <div className="modal-action mt-4">
+              <button type="submit" className="btn btn-primary" disabled={submitting || !replyText.trim()}>
+                {submitting ? (
+                  <>
+                    <span className="loading loading-spinner loading-sm"></span>
+                    Posting...
+                  </>
+                ) : (
+                  <>
+                    <BiCommentDots className="mr-2" />
+                    Post Reply
+                  </>
+                )}
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+      
+      <div className="modal-action mt-0 pt-0">
+        {canClosePost(post) && post.status !== 'closed' && (
+          <button
+            className="btn btn-error"
+            onClick={() => handleUpdateStatus(post.id, 'closed')}
+          >
+            Close Post
+          </button>
+        )}
+        {canClosePost(post) && post.status === 'closed' && (
+          <button
+            className="btn btn-success"
+            onClick={() => handleUpdateStatus(post.id, 'open')}
+          >
+            Re-open Post
+          </button>
+        )}
+
+        {isModal && (
+          <button className="btn btn-ghost" onClick={onBack}>
+            Close
+          </button>
+        )}
+      </div>
+    </>
+  )
+}
 function ForumPage() {
   const [posts, setPosts] = useState([])
   const [selectedPost, setSelectedPost] = useState(null)
@@ -298,138 +452,7 @@ function ForumPage() {
     return 0 // Will be updated when we load each post's replies
   }
 
-  const PostViewer = ({ post, isModal, onBack }) => (
-    <>
-      {!isModal && (
-        <button
-          className="btn btn-sm btn-ghost mb-4"
-          onClick={() => setSelectedPost(null)}
-        >
-          ← Back to Home
-        </button>
-      )}
-      <div className="flex items-center gap-2 mb-4">
-        <h3 className="font-bold text-lg flex-1">{post.title}</h3>
-        {canClosePost(post) && (
-          <button
-            className="btn btn-sm btn-ghost"
-            onClick={() => handleEditPost(post)}
-          >
-            <BiEdit className="h-4 w-4" />
-          </button>
-        )}
-        <div
-          className={`badge ${
-            post.status === 'open'
-              ? 'badge-success'
-              : post.status === 'in-progress'
-              ? 'badge-warning'
-              : 'badge-error'
-          }`}
-        >
-          {post.status}
-        </div>
-      </div>
-      
-      <div className="py-4">
-        <div className="flex flex-wrap items-center gap-4 text-sm opacity-70 mb-4 border-b pb-4">
-          <div className="flex items-center gap-1">
-            <BiUser /> {post.authorName}
-          </div>
-          <div className="flex items-center gap-1">
-            <BiTime /> {moment(post.createdAt).fromNow()}
-          </div>
-        </div>
-        
-        <p className="text-base-content/90 whitespace-pre-wrap mb-6">{post.content}</p>
-        
-        {/* Replies Section */}
-        <div className="mt-6">
-          <div className="divider">Replies ({replies.length})</div>
-          
-          <div className="space-y-4">
-            {replies.map(reply => (
-              <div key={reply.id} className="card bg-base-200 shadow-sm">
-                <div className="card-body p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="avatar placeholder">
-                      <div className="bg-neutral-focus text-neutral-content rounded-full w-8">
-                        <span>{reply.authorName?.charAt(0) || 'U'}</span>
-                      </div>
-                    </div>
-                    <div>
-                      <span className="font-semibold">{reply.authorName}</span>
-                      <span className="text-xs text-base-content/70 ml-2">
-                        {moment(reply.createdAt).fromNow()}
-                      </span>
-                    </div>
-                  </div>
-                  <p className="text-base-content/90 mt-2 ml-11">{reply.content}</p>
-                </div>
-              </div>
-            ))}
-            {replies.length === 0 && (
-              <p className="text-sm text-center text-base-content/60">No replies yet.</p>
-            )}
-          </div>
-
-          {/* Reply Form */}
-          <form onSubmit={handleAddReply} className="mt-6">
-            <div className="form-control">
-              <p className="label-text font-semibold mb-3">Post a Reply</p>
-              <textarea
-                className="textarea textarea-bordered h-24"
-                placeholder="Write your reply..."
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                disabled={submitting}
-              ></textarea>
-            </div>
-            <div className="modal-action mt-4">
-              <button type="submit" className="btn btn-primary" disabled={submitting || !replyText.trim()}>
-                {submitting ? (
-                  <>
-                    <span className="loading loading-spinner loading-sm"></span>
-                    Posting...
-                  </>
-                ) : (
-                  <>
-                    <BiCommentDots className="mr-2" />
-                    Post Reply
-                  </>
-                )}
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
-      
-      <div className="modal-action mt-0 pt-0">
-        {canClosePost(post) && post.status !== 'closed' && (
-          <button
-            className="btn btn-error"
-            onClick={() => handleUpdateStatus(post.id, 'closed')}
-          >
-            Close Post
-          </button>
-        )}
-        {canClosePost(post) && post.status === 'closed' && (
-          <button
-            className="btn btn-success"
-            onClick={() => handleUpdateStatus(post.id, 'open')}
-          >
-            Re-open Post
-          </button>
-        )}
-
-        {isModal && (
-          <button className="btn btn-ghost" onClick={onBack}>
-            Close
-          </button>
-        )}
-      </div>
-    </>
-  )
+  
 
   const pageContent = (
     <div className="flex flex-col h-screen">
@@ -572,8 +595,19 @@ function ForumPage() {
             <div className="p-6">
               <PostViewer 
                 post={selectedPost} 
-                isModal={false} 
+                isModal={false} // Set to true for the mobile modal version
                 onBack={() => setSelectedPost(null)} 
+
+                /* Add these new props */
+                user={user}
+                replies={replies}
+                replyText={replyText}
+                setReplyText={setReplyText}
+                handleAddReply={handleAddReply}
+                handleEditPost={handleEditPost}
+                handleUpdateStatus={handleUpdateStatus}
+                submitting={submitting}
+                setSelectedPost={setSelectedPost}
               />
             </div>
           ) : (
@@ -652,8 +686,19 @@ function ForumPage() {
           <div className="modal-box w-11/12 max-w-5xl">
             <PostViewer 
               post={selectedPost} 
-              isModal={true} 
-              onBack={() => setSelectedPost(null)}
+              isModal={false} // Set to true for the mobile modal version
+              onBack={() => setSelectedPost(null)} 
+                  
+              /* Add these new props */
+              user={user}
+              replies={replies}
+              replyText={replyText}
+              setReplyText={setReplyText}
+              handleAddReply={handleAddReply}
+              handleEditPost={handleEditPost}
+              handleUpdateStatus={handleUpdateStatus}
+              submitting={submitting}
+              setSelectedPost={setSelectedPost}
             />
           </div>
           <form method="dialog" className="modal-backdrop">
