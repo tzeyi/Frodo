@@ -488,7 +488,8 @@ function TicketsPage() {
         <div className="stats shadow">
           <div className="stat">
             <div className="stat-title">Open</div>
-            <div className="stat-value text-error">{ticketsByStatus.open.length}</div>
+            {/* Changed text-error (red) to text-success (green) */}
+            <div className="stat-value text-success">{ticketsByStatus.open.length}</div>
             <div className="stat-desc">filtered by event if selected</div>
           </div>
           <div className="stat">
@@ -498,7 +499,8 @@ function TicketsPage() {
           </div>
           <div className="stat">
             <div className="stat-title">Closed</div>
-            <div className="stat-value text-success">{ticketsByStatus.closed.length}</div>
+            {/* Changed text-success (green) to text-error (red) */}
+            <div className="stat-value text-error">{ticketsByStatus.closed.length}</div>
             <div className="stat-desc">filtered by event if selected</div>
           </div>
         </div>
@@ -1078,10 +1080,10 @@ function TicketsPage() {
                   <span className="font-semibold">Current Status:</span>
                   <span
                     className={`badge ${selectedTicket.status === 'open'
-                      ? 'badge-error'
+                      ? 'badge-success'
                       : selectedTicket.status === 'in-progress'
                         ? 'badge-warning'
-                        : 'badge-success'
+                        : 'badge-error'
                       }`}
                   >
                     {selectedTicket.status}
