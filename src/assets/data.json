@@ -129,22 +129,22 @@
   },
   "events": [
     {
-      "id": "event_aa_shelter_2024",
+      "id": 1,
       "name": "Emergency Shelter Setup",
       "description": "Shelter for displaced families after flooding",
       "startDate": "2024-10-15T00:00:00Z",
-      "endDate": null,
+      "endDate": "2024-12-31T23:59:59Z",
       "locationId": "loc_aa_community_center",
       "organizationId": "org_aa_relief",
       "status": "active",
       "createdAt": "2024-10-14T00:00:00Z"
     },
     {
-      "id": "event_detroit_food_2024",
+      "id": 2,
       "name": "Food Distribution Center",
       "description": "Daily meal service for 500 families",
       "startDate": "2024-10-15T00:00:00Z",
-      "endDate": null,
+      "endDate": "2025-03-31T23:59:59Z",
       "locationId": "loc_detroit_relief_center",
       "organizationId": "org_detroit_relief",
       "status": "active",
@@ -153,41 +153,41 @@
   ],
   "tickets": [
     {
-      "id": "ticket_001",
+      "id": 1,
       "title": "Urgent water shortage",
       "description": "Need immediate water supply for shelter residents",
       "resourceType": "water",
       "amountRequested": 200,
-      "amountAchieved": 0,
+      "amountAchieved": 125,
       "unit": "bottles",
-      "status": "open",
+      "status": "in-progress",
       "priority": "high",
       "locationId": "loc_north_ann_arbor",
       "timeOpened": "2025-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event_aa_shelter_2024",
+      "eventId": 1,
       "organizationId": "org_aa_relief",
       "createdBy": null
     },
     {
-      "id": "ticket_002",
+      "id": 2,
       "title": "Food supplies needed",
       "description": "Running low on non-perishable food items",
       "resourceType": "food",
       "amountRequested": 100,
-      "amountAchieved": 50,
+      "amountAchieved": 30,
       "unit": "meals",
       "status": "in-progress",
       "priority": "medium",
       "locationId": "loc_detroit_relief_center",
       "timeOpened": "2024-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event_detroit_food_2024",
+      "eventId": 2,
       "organizationId": "org_detroit_relief",
       "createdBy": null
     },
     {
-      "id": "ticket_003",
+      "id": 3,
       "title": "Need 25 volunteers to setup tents",
       "description": "Volunteers needed for tent assembly and setup",
       "resourceType": "labor",
@@ -199,7 +199,7 @@
       "locationId": "loc_aa_fairgrounds",
       "timeOpened": "2024-10-20T08:30:00Z",
       "timeClosed": null,
-      "eventId": "event_aa_shelter_2024",
+      "eventId": 1,
       "organizationId": "org_aa_relief",
       "createdBy": null
     }
@@ -207,23 +207,149 @@
   "users": [
     {
       "id": "user_001",
-      "name": "John Smith",
+      "displayName": "John Smith",
       "email": "john.smith@example.com",
+      "photoURL": null,
       "organizationId": "org_aa_relief",
       "organization": "Ann Arbor Disaster Relief",
       "role": "Volunteer",
+      "roleId": "role_volunteer",
       "locationIds": ["loc_ann_arbor", "loc_detroit"],
-      "hasCompletedOnboarding": true
+      "hasCompletedOnboarding": true,
+      "createdAt": "2024-09-01T10:00:00Z"
     },
     {
       "id": "user_002",
-      "name": "Jane Doe",
+      "displayName": "Jane Doe",
       "email": "jane.doe@example.com",
+      "photoURL": null,
       "organizationId": "org_detroit_relief",
       "organization": "Detroit Relief Org",
       "role": "Admin",
+      "roleId": "role_admin",
       "locationIds": ["loc_detroit"],
-      "hasCompletedOnboarding": true
+      "hasCompletedOnboarding": true,
+      "createdAt": "2024-08-15T10:00:00Z"
+    },
+    {
+      "id": "user_alice",
+      "displayName": "Alice Johnson",
+      "email": "alice.johnson@example.com",
+      "photoURL": null,
+      "organizationId": null,
+      "organization": null,
+      "role": "Volunteer",
+      "roleId": "role_volunteer",
+      "locationIds": ["loc_ann_arbor"],
+      "hasCompletedOnboarding": true,
+      "createdAt": "2024-10-01T10:00:00Z"
+    },
+    {
+      "id": "user_bob",
+      "displayName": "Bob Smith",
+      "email": "bob.smith@example.com",
+      "photoURL": null,
+      "organizationId": null,
+      "organization": null,
+      "role": "Volunteer",
+      "roleId": "role_volunteer",
+      "locationIds": ["loc_ann_arbor"],
+      "hasCompletedOnboarding": true,
+      "createdAt": "2024-10-05T10:00:00Z"
+    },
+    {
+      "id": "user_charlie",
+      "displayName": "Charlie Davis",
+      "email": "charlie.davis@example.com",
+      "photoURL": null,
+      "organizationId": "org_detroit_relief",
+      "organization": "Detroit Relief Org",
+      "role": "Volunteer",
+      "roleId": "role_volunteer",
+      "locationIds": ["loc_detroit"],
+      "hasCompletedOnboarding": true,
+      "createdAt": "2024-09-20T10:00:00Z"
+    }
+  ],
+  "resourceTypes": [
+    {
+      "id": "water",
+      "name": "Water",
+      "units": ["bottles", "liters", "gallons", "ml", "cases", "other"]
+    },
+    {
+      "id": "food",
+      "name": "Food",
+      "units": ["meals", "kg", "lbs", "boxes", "cans", "packages", "other"]
+    },
+    {
+      "id": "towels",
+      "name": "Towels",
+      "units": ["pieces", "dozens", "boxes", "other"]
+    },
+    {
+      "id": "labor",
+      "name": "Labor/Volunteers",
+      "units": ["volunteers", "hours", "days", "other"]
+    },
+    {
+      "id": "medical",
+      "name": "Medical Supplies",
+      "units": ["kits", "boxes", "pieces", "doses", "other"]
+    },
+    {
+      "id": "clothing",
+      "name": "Clothing",
+      "units": ["pieces", "sets", "bags", "boxes", "other"]
+    },
+    {
+      "id": "blankets",
+      "name": "Blankets",
+      "units": ["pieces", "dozens", "boxes", "other"]
+    },
+    {
+      "id": "equipment",
+      "name": "Equipment",
+      "units": ["pieces", "sets", "units", "other"]
+    },
+    {
+      "id": "funding",
+      "name": "Funding",
+      "units": ["USD", "EUR", "other"]
+    },
+    {
+      "id": "other",
+      "name": "Other",
+      "units": ["other"]
+    }
+  ],
+  "contributions": [
+    {
+      "id": 1,
+      "ticketId": 1,
+      "userId": "user_alice",
+      "userName": "Alice Johnson",
+      "amount": 50,
+      "unit": "bottles",
+      "contributedAt": "2025-12-01T10:30:00Z"
+    },
+    {
+      "id": 2,
+      "ticketId": 1,
+      "userId": "user_bob",
+      "userName": "Bob Smith",
+      "amount": 75,
+      "unit": "bottles",
+      "contributedAt": "2025-12-02T14:20:00Z"
+    },
+    {
+      "id": 3,
+      "ticketId": 2,
+      "userId": "user_charlie",
+      "userName": "Charlie Davis",
+      "amount": 30,
+      "unit": "meals",
+      "contributedAt": "2025-12-03T09:15:00Z"
     }
   ],
   "roles": [

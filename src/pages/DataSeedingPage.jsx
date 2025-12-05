@@ -7,9 +7,11 @@ import {
 	clearAllData, 
 	checkDataExists,
 	seedLocations,
+	seedUsers,
 	seedOrganizations,
 	seedEvents,
 	seedTickets,
+	seedContributions,
 	seedResources,
 	seedFunding
 } from '../services/seedFirestore'
@@ -196,6 +198,13 @@ function DataSeedingPage() {
 							</button>
 							<button 
 								className="btn btn-outline"
+								onClick={() => handleSeedIndividual(seedUsers, 'Users')}
+								disabled={loading}
+							>
+								👥 Seed Users
+							</button>
+							<button 
+								className="btn btn-outline"
 								onClick={() => handleSeedIndividual(seedOrganizations, 'Organizations')}
 								disabled={loading}
 							>
@@ -214,6 +223,13 @@ function DataSeedingPage() {
 								disabled={loading}
 							>
 								🎫 Seed Tickets
+							</button>
+							<button 
+								className="btn btn-outline"
+								onClick={() => handleSeedIndividual(seedContributions, 'Contributions')}
+								disabled={loading}
+							>
+								🤝 Seed Contributions
 							</button>
 							<button 
 								className="btn btn-outline"
