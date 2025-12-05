@@ -741,7 +741,9 @@ function TicketsPage() {
                       onClick={() => setSelectedTicket(ticket)}
                     >
                       <td>#{ticket.id}</td>
-                      <td>{ticket.title}</td>
+                      <td className="whitespace-normal min-w-[150px] max-w-[200px] md:max-w-md break-words">
+                        {ticket.title}
+                      </td>
                       <td className="capitalize">{ticket.resourceType}</td>
                       <td>{ticket.amountRequested} {ticket.unit}</td>
                       <td>
@@ -764,12 +766,12 @@ function TicketsPage() {
                       <td>{getLocationName(ticket.locationId)}</td>
                       <td>
                         <div
-                          className={`badge ${ticket.status === 'open'
-                            ? 'badge-error'
+                          className={`badge whitespace-nowrap ${ticket.status === 'open' /* Added whitespace-nowrap */
+                            ? 'badge-success'
                             : ticket.status === 'in-progress'
-                              ? 'badge-warning'
-                              : 'badge-success'
-                            }`}
+                            ? 'badge-warning'
+                            : 'badge-error'
+                          }`}
                         >
                           {ticket.status}
                         </div>
