@@ -44,7 +44,7 @@ const SideBar = ({ pageContent }) => {
 
                 <div className="drawer-side is-drawer-close:overflow-visible">
                     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-                    <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-base-300 flex flex-col items-start min-h-full">
+                    <div className="is-drawer-close:w-14 is-drawer-open:w-64 bg-info-content flex flex-col items-start min-h-full">
                         
                         {/* button to open/close drawer */}
                         <div className="m-2 is-drawer-close:tooltip is-drawer-close:tooltip-right" data-tip="Open">
@@ -54,7 +54,7 @@ const SideBar = ({ pageContent }) => {
                         </div>
 
                         {/* Sidebar content here */}
-                        <ul className="menu w-full grow">
+                        <ul className="menu w-full grow text-base-100">
                             {/* list item */}
                             {sidebarItems.map((item, index) => (
                                 <li key={index}>

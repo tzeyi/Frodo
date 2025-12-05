@@ -23,11 +23,6 @@ function DashboardPage() {
   const [events, setEvents] = useState(null)
   const [tickets, setTickets] = useState(null)
 
-  // const resources = data.resources
-  // const funding = data.funding
-  // const events = data.events
-  // const tickets = data.tickets
-
   useEffect(() => {
     fetchResources(setResources, setResourceLoading)
     fetchFunding(setFunding, setFundingLoading)
@@ -48,13 +43,13 @@ function DashboardPage() {
         {
             label: 'Current Amount',
             data: resources.map(r => r.amount),
-            backgroundColor: '#9523e0ff',
+            backgroundColor: '#0c6833ff',
             barThickness: 30,
         },
         {
             label: 'Target Amount',
-            data: resources.map(r => r.target - r.amount),
-            backgroundColor: '#20deffff',
+            data: resources.map(r => r.target),
+            backgroundColor: '#20bf62ff',
             barThickness: 30,
         }
         ]
@@ -66,8 +61,8 @@ function DashboardPage() {
       {
         label: 'Funding ($)',
         data: [funding.totalAcquired/6, funding.totalAcquired/5, funding.totalAcquired/4, funding.totalAcquired/3, funding.totalAcquired/2],
-        borderColor: 'rgba(51, 234, 91, 1)',
-        backgroundColor: 'rgba(73, 240, 39, 1)',
+        borderColor: 'rgba(52, 197, 223, 1)', 
+        backgroundColor: 'rgba(51, 188, 234, 1)',
       },
       {
         label: 'Expenditure ($)',
@@ -210,9 +205,9 @@ function DashboardPage() {
             <LineChart data={fundingLineData} title="Funding & Expenditure Overview" />
           </div>
 
-          {/* Resource Progress Chart */}
+          {/* Resource Summary Chart */}
           <div className="card bg-base-100 shadow-xl p-4">
-            <BarChart data={barChartData} title="Resource Progress"/>
+            <BarChart data={barChartData} title="Resource Summary"/>
           </div>
         </div>
       </section>
@@ -223,53 +218,11 @@ function DashboardPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
           {/* Event 1: Emergency Shelter Setup */}
-          {events.map((event, index) => 
-            <EventCard key={index} eventTitle={event.name} eventDesc={event.description} eventTickets={tickets}/>
-          )}
-          
-          {/* Event 3: Medical Aid Station */}
-          <div className="card bg-base-100 shadow-xl">
-            <div className="card-body">
-              <h3 className="card-title text-lg">Medical Aid Station</h3>
-              <p className="text-sm opacity-70 mb-2">Emergency medical response setup</p>
+          {events.map((event, index) => {
+            const eventTickets = tickets.filter(ticket => ticket.eventId === event.id)
 
-              <div className="space-y-3">
-                {/* Medical supplies needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-warning mr-2">Medical</div>
-                      Need 100 first aid kits
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">45/100</span>
-                    <span className="text-xs opacity-60">45% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-warning h-2 rounded-full" style={{ width: '45%' }}></div>
-                  </div>
-                </div>
-
-                {/* Volunteers needed */}
-                <div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">
-                      <div className="badge badge-primary mr-2">Labor</div>
-                      Need 25 volunteers
-                    </span>
-                  </div>
-                  <div className="flex items-center justify-between mt-1">
-                    <span className="text-xl font-bold">18/25</span>
-                    <span className="text-xs opacity-60">72% fulfilled</span>
-                  </div>
-                  <div className="w-full bg-gray-200 rounded-full h-2 mt-1">
-                    <div className="bg-primary h-2 rounded-full" style={{ width: '72%' }}></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+            return <EventCard key={index} eventTitle={event.name} eventDesc={event.description} eventTickets={eventTickets}/>
+          })}
 
         </div>
       </section>
