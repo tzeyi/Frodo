@@ -202,8 +202,8 @@ function DashboardPage() {
         </div>
 
         {/* Status Updates (Your Tickets) Section */}
-        <div className="w-1/3 p-2">
-          <ul className="list bg-base-100 rounded-box shadow-md">
+        <div className="w-full lg:w-1/3">
+          <ul className="list bg-base-100 rounded-box shadow-md h-full">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide"> My Contributions </li>
             {myContributions.length === 0 ? (
               <li className="p-4 text-sm opacity-60 text-center">No contributions yet</li>
@@ -211,18 +211,18 @@ function DashboardPage() {
               myContributions.slice(0, 5).map((contrib, index) => {
                 const ticket = allTickets.find(t => Number(t.id) === Number(contrib.ticketId))
                 return (
-                  <li key={index} className="list-row">
-                    <div>
-                      <div className="font-semibold">{ticket?.title || `Ticket #${contrib.ticketId}`}</div>
+                  <li key={index} className="list-row flex items-center gap-2 p-2 hover:bg-base-200 transition-colors">
+                    <div className="flex-1 min-w-0">
+                      <div className="truncate font-medium">{ticket?.title || `Ticket #${contrib.ticketId}`}</div>
                       <div className="text-xs uppercase font-semibold opacity-60">
                         {moment(contrib.createdAt).fromNow()}
                       </div>
                     </div>
 
-                    <div className="badge badge-primary">
+                    <div className="badge badge-primary shrink-0">
                       {contrib.amount} {ticket?.unit || contrib.unit}
                     </div>
-                    <button className="btn btn-square btn-ghost" onClick={() => navigate("/tickets")}>
+                    <button className="btn btn-square btn-ghost btn-sm shrink-0" onClick={() => navigate("/tickets")}>
                       <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></g></svg>
                     </button>
                   </li>
