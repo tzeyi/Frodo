@@ -85,16 +85,16 @@ function DashboardPage() {
       {console.log("resources: ")}
       {console.log(resources[0].type)}
 
-      <section className="flex justify-around">
+      <section className="flex flex-col lg:flex-row gap-4 p-2">
         {/* ProjectTargets */}
-        <div className="w-1/3 p-2">
-          <div className="card bg-base-100 shadow-lg">
+        <div className="w-full lg:w-1/3">
+          <div className="card bg-base-100 shadow-lg h-full">
             <div className="card-body">
               <h2 className="text-xs font-semibold uppercase tracking-wide opacity-80">2025's Targets</h2>
               {/* Tickets completed */}
-              <div className="flex items-center gap-12">
+              <div className="flex items-center gap-6">
                 <div
-                  className="radial-progress text-primary"
+                  className="radial-progress text-primary shrink-0"
                   style={{ "--value": 70, "--size": "5rem", "--thickness": "6px" }}
                   role="progressbar"
                   aria-valuenow={70}
@@ -153,22 +153,22 @@ function DashboardPage() {
         </div>
 
         {/* Status Updates (Urgent Incomplete Tickets) Section */}
-        <div className="w-1/3 p-2">
-          <ul className="list bg-base-100 rounded-box shadow-md">
+        <div className="w-full lg:w-1/3">
+          <ul className="list bg-base-100 rounded-box shadow-md h-full">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide"> Urgent Incomplete Tickets </li>
             {tickets.map((ticket, index) => (
-              <li key={index} className="list-row">
-                <div>
-                  <div> {ticket.title} </div>
+              <li key={index} className="list-row flex items-center gap-2 p-2 hover:bg-base-200 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="truncate font-medium"> {ticket.title} </div>
                   <div className="text-xs uppercase font-semibold opacity-60"> {moment(ticket.timeOpened).fromNow()} </div>
                 </div>
 
-                <div className={`badge badge-outline ${ticket.priority === 'high' ? 'badge-error' :
+                <div className={`badge badge-outline shrink-0 ${ticket.priority === 'high' ? 'badge-error' :
                   ticket.priority === 'medium' ? 'badge-warning' :
                     'badge-info'
                   }`}> {ticket.priority}
                 </div>
-                <button className="btn btn-square btn-ghost" onClick={() => navigate("/tickets")}>
+                <button className="btn btn-square btn-ghost btn-sm shrink-0" onClick={() => navigate("/tickets")}>
                   <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></g></svg>
                 </button>
               </li>
@@ -177,22 +177,22 @@ function DashboardPage() {
         </div>
 
         {/* Status Updates (Your Tickets) Section */}
-        <div className="w-1/3 p-2">
-          <ul className="list bg-base-100 rounded-box shadow-md">
+        <div className="w-full lg:w-1/3">
+          <ul className="list bg-base-100 rounded-box shadow-md h-full">
             <li className="p-4 pb-2 text-xs opacity-60 tracking-wide"> Your Tickets </li>
             {tickets.map((ticket, index) => (
-              <li key={index} className="list-row">
-                <div>
-                  <div> {ticket.title} </div>
+              <li key={index} className="list-row flex items-center gap-2 p-2 hover:bg-base-200 transition-colors">
+                <div className="flex-1 min-w-0">
+                  <div className="truncate font-medium"> {ticket.title} </div>
                   <div className="text-xs uppercase font-semibold opacity-60"> {moment(ticket.timeOpened).fromNow()} </div>
                 </div>
 
-                <div className={`badge badge-outline ${ticket.priority === 'high' ? 'badge-error' :
+                <div className={`badge badge-outline shrink-0 ${ticket.priority === 'high' ? 'badge-error' :
                   ticket.priority === 'medium' ? 'badge-warning' :
                     'badge-info'
                   }`}> {ticket.priority}
                 </div>
-                <button className="btn btn-square btn-ghost" onClick={() => navigate("/tickets")}>
+                <button className="btn btn-square btn-ghost btn-sm shrink-0" onClick={() => navigate("/tickets")}>
                   <svg className="size-[1.2em]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor"><path d="M5 12h14M12 5l7 7-7 7"/></g></svg>
                 </button>
               </li>

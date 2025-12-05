@@ -577,74 +577,43 @@ function SettingsPage() {
                         </>
                     ) : (
                         <>
-                            {/* Location Selector */}
-                            <div className="form-control mb-4">
-                                <label className="label">
-                                    <span className="label-text font-semibold">Select Location</span>
-                                </label>
-                                <div className="flex gap-2">
-                                    <select 
-                                        className="select select-bordered flex-1"
-                                        value={selectedLocationId}
-                                        onChange={(e) => handleLocationChange(e.target.value)}
-                                    >
-                                        {userData.locations.map((location) => {
-                                            const details = getUserLocationDetails(location.locationId || location.id)
-                                            return (
-                                                <option key={location.locationId || location.id} value={location.locationId || location.id}>
-                                                    {details?.name || 'Unknown Location'}
-                                                </option>
-                                            )
-                                        })}
-                                    </select>
-                                    {userData.locations.length > 1 && (
-                                        <button
-                                            className="btn btn-error btn-outline"
-                                            onClick={() => handleDeleteLocation(selectedLocationId)}
-                                            disabled={loading}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                            </svg>
-                                        </button>
-                                    )}
+                           {!editingLocation ? (
+                                <div className="overflow-x-auto">
+                                    <table className="table w-full">
+                                        {/* Headers matching your screenshot */}
+                                        <thead>
+                                            <tr>
+                                                <th className="text-base-content/60 text-sm font-semibold">Location Name</th>
+                                                <th className="text-base-content/60 text-sm font-semibold">Latitude</th>
+                                                <th className="text-base-content/60 text-sm font-semibold">Longitude</th>
+                                                <th className="w-10"></th> {/* Empty header for delete button */}
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {userData.locations.map((location) => {
+                                                const details = getUserLocationDetails(location.locationId || location.id)
+                                                return (
+                                                    <tr key={location.locationId || location.id} className="hover">
+                                                        <td className="text-lg font-medium">{details?.name || 'Unknown'}</td>
+                                                        <td className="text-lg opacity-80">{details?.lat?.toFixed(4) || 'N/A'}</td>
+                                                        <td className="text-lg opacity-80">{details?.lon?.toFixed(4) || 'N/A'}</td>
+                                                        <td className="text-right">
+                                                            <button
+                                                                className="btn btn-ghost btn-sm text-error opacity-60 hover:opacity-100"
+                                                                onClick={() => handleDeleteLocation(location.locationId || location.id)}
+                                                                title="Remove location"
+                                                            >
+                                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                                </svg>
+                                                            </button>
+                                                        </td>
+                                                    </tr>
+                                                )
+                                            })}
+                                        </tbody>
+                                    </table>
                                 </div>
-                            </div>
-                            
-                            {!editingLocation ? (
-                                <>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <label className="label">
-                                                <span className="label-text font-semibold">Location Name</span>
-                                            </label>
-                                            <p className="text-lg">{currentLocationDetails?.name || 'Unknown'}</p>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="label">
-                                                <span className="label-text font-semibold">Latitude</span>
-                                            </label>
-                                            <p className="text-lg">{currentLocationDetails?.lat || 'N/A'}</p>
-                                        </div>
-                                        
-                                        <div>
-                                            <label className="label">
-                                                <span className="label-text font-semibold">Longitude</span>
-                                            </label>
-                                            <p className="text-lg">{currentLocationDetails?.lon || 'N/A'}</p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div className="card-actions justify-end mt-4">
-                                        <button 
-                                            className="btn btn-primary"
-                                            onClick={() => setEditingLocation(true)}
-                                        >
-                                            Edit Location
-                                        </button>
-                                    </div>
-                                </>
                             ) : (
                                 <>
                                     <div className="form-control">

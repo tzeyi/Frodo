@@ -59,7 +59,6 @@ function TicketsPage() {
         ...ev,
         progress: ev.total ? Math.round((ev.closed / ev.total) * 100) : 0,
       }))
-      .filter((ev) => ev.progress < 100)
   })()
 
   const filteredTickets =
@@ -77,9 +76,10 @@ function TicketsPage() {
   }
 
   const ticketsByStatus = {
-    'open': tickets.filter(t => t.status === 'open'),
-    'in-progress': tickets.filter(t => t.status === 'in-progress'),
-    'closed': tickets.filter(t => t.status === 'closed')
+    // Change 'tickets' to 'filteredTickets' here
+    'open': filteredTickets.filter(t => t.status === 'open'),
+    'in-progress': filteredTickets.filter(t => t.status === 'in-progress'),
+    'closed': filteredTickets.filter(t => t.status === 'closed')
   }
 
   const pageContent = (
