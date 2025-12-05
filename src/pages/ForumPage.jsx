@@ -532,10 +532,12 @@ function ForumPage() {
                   onClick={() => handleSelectPost(post)}
                 >
                   <div className="card-body p-4">
-                    <div className="flex justify-between items-start">
-                      <h3 className="card-title text-base font-bold">{post.title}</h3>
+                    <div className="flex justify-between items-start gap-2">
+                      <h3 className="card-title text-base font-bold break-words whitespace-normal">
+                        {post.title}
+                      </h3>
                       <div
-                        className={`badge badge-sm ${
+                        className={`badge badge-sm shrink-0 ${ /* shrink-0 prevents the badge from being crushed */
                           post.status === 'open'
                             ? 'badge-success'
                             : post.status === 'in-progress'
