@@ -622,3 +622,304 @@ export const updateUserPreferences = async (userId, preferences) => {
         throw error;
     }
 }
+
+// Forum Posts Functions
+/**
+ * Get the next available post ID
+ */
+const getNextPostId = async () => {
+    try {
+        const snapshot = await getDocs(collection(db, 'posts'))
+        if (snapshot.empty) {
+            return 1
+        }
+        
+        const ids = snapshot.docs.map(doc => {
+            const id = doc.id
+            const numId = parseInt(id)
+            return isNaN(numId) ? 0 : numId
+        })
+        
+        const maxId = Math.max(...ids)
+        return maxId + 1
+    } catch (error) {
+        console.error('Error getting next post ID:', error)
+        return 1
+    }
+}
+
+/**
+ * Create a new forum post
+ */
+export const createPost = async (postData) => {
+    try {
+        const nextId = await getNextPostId()
+        const postRef = doc(db, 'posts', String(nextId))
+        
+        const newPost = {
+            ...postData,
+            status: 'open',
+            createdAt: new Date().toISOString()
+        }
+        
+        await setDoc(postRef, newPost)
+        
+        return { id: nextId, ...newPost }
+    } catch (error) {
+        console.error('Error creating post:', error)
+        throw error
+    }
+}
+
+/**
+ * Get all forum posts
+ */
+export const getAllPosts = async () => {
+    try {
+        const postsRef = collection(db, 'posts')
+        const snapshot = await getDocs(postsRef)
+        const posts = []
+        
+        snapshot.forEach((doc) => {
+            posts.push({ id: doc.id, ...doc.data() })
+        })
+        
+        // Sort by createdAt descending (newest first)
+        posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        
+        return posts
+    } catch (error) {
+        console.error('Error getting posts:', error)
+        throw error
+    }
+}
+
+/**
+ * Get post by ID
+ */
+export const getPostById = async (postId) => {
+    try {
+        const postRef = doc(db, 'posts', String(postId))
+        const postSnap = await getDoc(postRef)
+        
+        if (!postSnap.exists()) {
+            throw new Error('Post not found')
+        }
+        
+        return { id: postSnap.id, ...postSnap.data() }
+    } catch (error) {
+        console.error('Error getting post:', error)
+        throw error
+    }
+}
+
+/**
+ * Update post status
+ */
+export const updatePostStatus = async (postId, status) => {
+    try {
+        const postRef = doc(db, 'posts', String(postId))
+        await updateDoc(postRef, {
+            status,
+            updatedAt: new Date().toISOString()
+        })
+        
+        return { success: true }
+    } catch (error) {
+        console.error('Error updating post status:', error)
+        throw error
+    }
+}
+
+/**
+ * Update post content (title and/or content)
+ */
+export const updatePost = async (postId, updates) => {
+    try {
+        const postRef = doc(db, 'posts', String(postId))
+        await updateDoc(postRef, {
+            ...updates,
+            updatedAt: new Date().toISOString()
+        })
+        
+        return { success: true }
+    } catch (error) {
+        console.error('Error updating post:', error)
+        throw error
+    }
+}
+
+// Forum Replies Functions
+/**
+ * Get the next available reply ID
+ */
+const getNextReplyId = async () => {
+    try {
+        const snapshot = await getDocs(collection(db, 'replies'))
+        if (snapshot.empty) {
+            return 1
+        }
+        
+        const ids = snapshot.docs.map(doc => {
+            const id = doc.id
+            const numId = parseInt(id)
+            return isNaN(numId) ? 0 : numId
+        })
+        
+        const maxId = Math.max(...ids)
+        return maxId + 1
+    } catch (error) {
+        console.error('Error getting next reply ID:', error)
+        return 1
+    }
+}
+
+/**
+ * Create a new reply
+ */
+export const createReply = async (replyData) => {
+    try {
+        const nextId = await getNextReplyId()
+        const replyRef = doc(db, 'replies', String(nextId))
+        
+        const newReply = {
+            ...replyData,
+            createdAt: new Date().toISOString()
+        }
+        
+        await setDoc(replyRef, newReply)
+        
+        // Update post status if needed
+        await updatePostStatusOnReply(replyData.postId, replyData.authorId)
+        
+        return { id: nextId, ...newReply }
+    } catch (error) {
+        console.error('Error creating reply:', error)
+        throw error
+    }
+}
+
+/**
+ * Get all replies for a post
+ */
+export const getRepliesByPost = async (postId) => {
+    try {
+        const repliesRef = collection(db, 'replies')
+        const snapshot = await getDocs(repliesRef)
+        const replies = []
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data()
+            if (Number(data.postId) === Number(postId)) {
+                replies.push({ id: doc.id, ...data })
+            }
+        })
+        
+        // Sort by createdAt ascending (oldest first)
+        replies.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        
+        return replies
+    } catch (error) {
+        console.error('Error getting replies:', error)
+        throw error
+    }
+}
+
+/**
+ * Get all replies
+ */
+export const getAllReplies = async () => {
+    try {
+        const repliesRef = collection(db, 'replies')
+        const snapshot = await getDocs(repliesRef)
+        const replies = []
+        
+        snapshot.forEach((doc) => {
+            replies.push({ id: doc.id, ...doc.data() })
+        })
+        
+        return replies
+    } catch (error) {
+        console.error('Error getting all replies:', error)
+        throw error
+    }
+}
+
+/**
+ * Update post status when a reply is added
+ * Post moves to in-progress when another user replies
+ */
+const updatePostStatusOnReply = async (postId, replyAuthorId) => {
+    try {
+        const post = await getPostById(postId)
+        
+        // If post is open and reply is from a different user, move to in-progress
+        if (post.status === 'open' && post.authorId !== replyAuthorId) {
+            await updatePostStatus(postId, 'in-progress')
+        }
+    } catch (error) {
+        console.error('Error updating post status on reply:', error)
+    }
+}
+
+/**
+ * Get posts by user ID (posts created by user)
+ */
+export const getPostsByUser = async (userId) => {
+    try {
+        const postsRef = collection(db, 'posts')
+        const snapshot = await getDocs(postsRef)
+        const userPosts = []
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data()
+            if (data.authorId === userId) {
+                userPosts.push({ id: doc.id, ...data })
+            }
+        })
+        
+        userPosts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        
+        return userPosts
+    } catch (error) {
+        console.error('Error getting user posts:', error)
+        throw error
+    }
+}
+
+/**
+ * Get posts where user has participated (replied to)
+ */
+export const getPostsUserParticipatedIn = async (userId) => {
+    try {
+        // Get all replies by user
+        const repliesRef = collection(db, 'replies')
+        const snapshot = await getDocs(repliesRef)
+        const postIds = new Set()
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data()
+            if (data.authorId === userId) {
+                postIds.add(String(data.postId))
+            }
+        })
+        
+        // Get posts for these IDs
+        const posts = []
+        for (const postId of postIds) {
+            try {
+                const post = await getPostById(postId)
+                posts.push(post)
+            } catch (error) {
+                console.error(`Error getting post ${postId}:`, error)
+            }
+        }
+        
+        posts.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        
+        return posts
+    } catch (error) {
+        console.error('Error getting participated posts:', error)
+        throw error
+    }
+}

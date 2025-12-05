@@ -415,14 +415,14 @@ function SettingsPage() {
                         </>
                     ) : (
                         <>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold">Name</span>
                                     </label>
                                     <input 
                                         type="text"
-                                        className="input input-bordered"
+                                        className="input input-bordered w-full"
                                         value={accountForm.name}
                                         onChange={(e) => setAccountForm({...accountForm, name: e.target.value})}
                                     />
@@ -433,7 +433,7 @@ function SettingsPage() {
                                         <span className="label-text font-semibold">Organization</span>
                                     </label>
                                     <select 
-                                        className="select select-bordered"
+                                        className="select select-bordered w-full"
                                         value={accountForm.organization}
                                         onChange={(e) => setAccountForm({...accountForm, organization: e.target.value})}
                                     >
@@ -449,7 +449,7 @@ function SettingsPage() {
                                         <span className="label-text font-semibold">Role</span>
                                     </label>
                                     <select 
-                                        className="select select-bordered"
+                                        className="select select-bordered w-full"
                                         value={accountForm.role}
                                         onChange={(e) => {
                                             const selectedRole = availableRoles.find(role => role.name === e.target.value)
@@ -468,7 +468,7 @@ function SettingsPage() {
                                 </div>
                             </div>
                             
-                            <div className="card-actions justify-end mt-4 gap-2">
+                            <div className="card-actions justify-end mt-6 gap-2">
                                 <button 
                                     className="btn btn-ghost"
                                     onClick={() => {
@@ -540,7 +540,7 @@ function SettingsPage() {
                                             <span className="label-text font-semibold">Select a Location to Add</span>
                                         </label>
                                         <select 
-                                            className="select select-bordered"
+                                            className="select select-bordered w-full"
                                             value={selectedNewLocationId}
                                             onChange={(e) => setSelectedNewLocationId(e.target.value)}
                                         >
@@ -553,7 +553,7 @@ function SettingsPage() {
                                         </select>
                                     </div>
                                     
-                                    <div className="card-actions justify-end mt-4 gap-2">
+                                    <div className="card-actions justify-end mt-6 gap-2">
                                         <button 
                                             className="btn btn-ghost"
                                             onClick={() => {
@@ -621,7 +621,7 @@ function SettingsPage() {
                                             <span className="label-text font-semibold">Select a Location to Add</span>
                                         </label>
                                         <select 
-                                            className="select select-bordered"
+                                            className="select select-bordered w-full"
                                             value={selectedNewLocationId}
                                             onChange={(e) => setSelectedNewLocationId(e.target.value)}
                                         >
@@ -639,7 +639,7 @@ function SettingsPage() {
                                         </select>
                                     </div>
                                     
-                                    <div className="card-actions justify-end mt-4 gap-2">
+                                    <div className="card-actions justify-end mt-6 gap-2">
                                         <button 
                                             className="btn btn-ghost"
                                             onClick={() => {
@@ -670,22 +670,22 @@ function SettingsPage() {
         <section className="px-5 pt-2 pb-5">
             <div className="card bg-base-100 shadow-xl">
                 <div className="card-body p-8">
-                    <h2 className="card-title text-xl mb-4">App Preferences</h2>
+                    <h2 className="card-title text-xl mb-6">App Preferences</h2>
                     
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div>
                             <label className="label">
                                 <span className="label-text font-semibold">Theme</span>
                             </label>
-                            <div className="join">
+                            <div className="join w-full">
                                 <button 
-                                    className={`btn btn-sm join-item ${preferences.theme === 'light' ? 'btn-active' : ''}`}
+                                    className={`btn btn-sm join-item flex-1 ${preferences.theme === 'light' ? 'btn-active' : ''}`}
                                     onClick={() => handleThemeChange('light')}
                                 >
                                     Light
                                 </button>
                                 <button 
-                                    className={`btn btn-sm join-item ${preferences.theme === 'dark' ? 'btn-active' : ''}`}
+                                    className={`btn btn-sm join-item flex-1 ${preferences.theme === 'dark' ? 'btn-active' : ''}`}
                                     onClick={() => handleThemeChange('dark')}
                                 >
                                     Dark
