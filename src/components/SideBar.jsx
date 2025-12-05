@@ -48,14 +48,16 @@ const SideBar = ({ pageContent }) => {
 
                 <div className="drawer-side is-drawer-close:overflow-visible z-10">
                     <label htmlFor="my-drawer-4" aria-label="close sidebar" className="drawer-overlay"></label>
-                    <div className="is-drawer-close:w-16 is-drawer-open:w-64 bg-info-content text-base-100 flex flex-col items-start min-h-full border-r border-base-100/20 shadow-lg">
+                    <div className="is-drawer-close:w-16 is-drawer-open:w-64 bg-info-content text-white flex flex-col items-start min-h-full border-r border-base-100/20 shadow-lg">
                         
-                        {/* App branding / toggle button */}
-                        <div className="w-full px-4 py-5 flex items-center justify-between border-b border-base-100/20">
+                        {/* Frodo + toggle button */}
+                        <div className="w-full px-4 py-5 flex items-center justify-between border-b border-base-white/20">
                             <span className="is-drawer-close:hidden font-bold text-xl tracking-tight">Frodo</span>
-                        
-                            <label htmlFor="my-drawer-4" className="btn btn-ghost btn-sm btn-circle drawer-button is-drawer-open:rotate-180 transition-transform duration-300 hover:bg-base-100/10">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="size-5">
+                            <label htmlFor="my-drawer-4" className="btn btn-ghost btn-sm btn-circle drawer-button transition-transform duration-300 hover:bg-base-100/10">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="size-5 is-drawer-open:hidden">
+                                    <path d="M9 6l6 6l-6 6"></path>
+                                </svg>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" strokeLinejoin="round" strokeLinecap="round" strokeWidth="2" fill="none" stroke="currentColor" className="size-5 is-drawer-close:hidden">
                                     <path d="M15 6l-6 6l6 6"></path>
                                 </svg>
                             </label>

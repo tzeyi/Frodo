@@ -101,9 +101,10 @@ function DashboardPage() {
   const pageContent = (
     <>
       {/* Heading Section */}
+      {console.log("tickets: ")}
+      {console.log(tickets)}
+
       <h1 className="pl-5 pt-5 text-2xl font-bold text-primary mb-4"> Welcome to Frodo! </h1>
-      {console.log("resources: ")}
-      {console.log(resources[0].type)}
 
       <section className="flex flex-col lg:flex-row gap-4 p-2">
         {/* ProjectTargets */}
@@ -258,7 +259,9 @@ function DashboardPage() {
 
           {/* Event 1: Emergency Shelter Setup */}
           {events.map((event, index) => {
-            const eventTickets = tickets.filter(ticket => ticket.eventId === event.id)
+            const eventTickets = tickets.filter(ticket => parseInt(ticket.eventId) === parseInt(event.id))
+            // console.log("send event Tickets: ")
+            // console.log(eventTickets)
 
             return <EventCard key={index} eventTitle={event.name} eventDesc={event.description} eventTickets={eventTickets}/>
           })}
