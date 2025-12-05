@@ -13,10 +13,12 @@ export const seedAllData = async () => {
 		console.log('🌱 Starting Firestore data seeding...')
 		
 		await seedLocations()
+		await seedUsers()
 		await seedRoles()
 		await seedOrganizations()
 		await seedEvents()
 		await seedTickets()
+		await seedContributions()
 		await seedResources()
 		await seedFunding()
 		
@@ -49,6 +51,36 @@ export const seedLocations = async () => {
 		return { success: true, count: mockData.locations.length }
 	} catch (error) {
 		console.error('Error seeding locations:', error)
+		throw error
+	}
+}
+
+/**
+ * Seed users collection
+ */
+export const seedUsers = async () => {
+	try {
+		console.log('👥 Seeding users...')
+		const batch = writeBatch(db)
+		
+		if (mockData.users) {
+			mockData.users.forEach((user) => {
+				const userRef = doc(db, 'users', user.id)
+				batch.set(userRef, {
+					...user,
+					updatedAt: new Date().toISOString()
+				})
+			})
+			
+			await batch.commit()
+			console.log(`✅ Seeded ${mockData.users.length} users`)
+			return { success: true, count: mockData.users.length }
+		} else {
+			console.log('⚠️ No users data found in mockData')
+			return { success: true, count: 0 }
+		}
+	} catch (error) {
+		console.error('Error seeding users:', error)
 		throw error
 	}
 }
@@ -113,7 +145,7 @@ export const seedEvents = async () => {
 		const batch = writeBatch(db)
 		
 		mockData.events.forEach((event) => {
-			const eventRef = doc(db, 'events', event.id)
+			const eventRef = doc(db, 'events', String(event.id))
 			batch.set(eventRef, {
 				...event,
 				updatedAt: new Date().toISOString()
@@ -138,7 +170,8 @@ export const seedTickets = async () => {
 		const batch = writeBatch(db)
 		
 		mockData.tickets.forEach((ticket) => {
-			const ticketRef = doc(db, 'tickets', ticket.id)
+			// Use integer ID as string for Firestore document ID
+			const ticketRef = doc(db, 'tickets', String(ticket.id))
 			batch.set(ticketRef, {
 				...ticket,
 				createdAt: ticket.timeOpened,
@@ -151,6 +184,33 @@ export const seedTickets = async () => {
 		return { success: true, count: mockData.tickets.length }
 	} catch (error) {
 		console.error('Error seeding tickets:', error)
+		throw error
+	}
+}
+
+/**
+ * Seed contributions collection
+ */
+export const seedContributions = async () => {
+	try {
+		console.log('🤝 Seeding contributions...')
+		const batch = writeBatch(db)
+		
+		if (mockData.contributions) {
+			mockData.contributions.forEach((contribution) => {
+				const contributionRef = doc(db, 'contributions', String(contribution.id))
+				batch.set(contributionRef, contribution)
+			})
+			
+			await batch.commit()
+			console.log(`✅ Seeded ${mockData.contributions.length} contributions`)
+			return { success: true, count: mockData.contributions.length }
+		} else {
+			console.log('⚠️ No contributions data found in mockData')
+			return { success: true, count: 0 }
+		}
+	} catch (error) {
+		console.error('Error seeding contributions:', error)
 		throw error
 	}
 }

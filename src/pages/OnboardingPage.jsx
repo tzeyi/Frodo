@@ -239,11 +239,9 @@ function OnboardingPage() {
 	return (
 		<div className="flex items-center justify-center min-h-screen bg-base-200 p-4">
 			<div className="w-full max-w-lg">
-				<div className="text-center mb-8">
-					<div className="avatar placeholder w-16 h-16 rounded-2xl bg-primary/10 mx-auto mb-4 flex items-center justify-center text-primary font-bold text-2xl">F</div>
-				</div>
-				
-				<div className="card bg-base-100 shadow-xl p-8">
+			<div className="text-center mb-8">
+				<div className="avatar placeholder w-16 h-16 rounded-2xl bg-white mx-auto mb-4 flex items-center justify-center text-black font-bold text-2xl shadow-sm">F</div>
+			</div>				<div className="card bg-base-100 shadow-xl p-8">
 					{step === 'role' && renderRoleSelection()}
 					{step === 'organization' && renderOrganizationSelection()}
 				</div>
