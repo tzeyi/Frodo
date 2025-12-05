@@ -365,88 +365,126 @@
       "description": "Administrator with full access to manage organization",
       "permissions": ["view_events", "view_tickets", "create_tickets", "manage_events", "manage_users", "manage_resources"]
     }
-  ], 
+  ],
   "posts": [
     {
       "id": 1,
       "title": "Welcome to the Forum!",
-      "author": "Admin",
-      "authorAvatar": "A",
-      "date": "2025-11-15",
-      "status": "closed",
       "content": "Welcome everyone! This is the place for general discussion, questions, and coordinating efforts.\n\nPlease be respectful and keep discussions on topic.",
-      "replies": [
-        {
-          "id": 101,
-          "author": "JaneD",
-          "authorAvatar": "J",
-          "date": "2025-11-15",
-          "content": "Great to be here!"
-        },
-        {
-          "id": 102,
-          "author": "MikeB",
-          "authorAvatar": "M",
-          "date": "2025-11-16",
-          "content": "Thanks for setting this up."
-        }
-      ]
+      "authorId": "user_002",
+      "authorName": "Jane Doe",
+      "status": "closed",
+      "createdAt": "2025-11-15T08:00:00Z"
     },
     {
       "id": 2,
       "title": "Need volunteers for upcoming food drive",
-      "author": "ProjectCoordinator",
-      "authorAvatar": "P",
-      "date": "2025-11-14",
-      "status": "in-progress",
       "content": "We are organizing a food drive next weekend at the community center. We need 10 volunteers for sorting and distribution.\n\nSign-ups are here: [link]",
-      "replies": [
-        {
-          "id": 103,
-          "author": "Volunteer1",
-          "authorAvatar": "V",
-          "date": "2025-11-14",
-          "content": "I can help on Saturday!"
-        },
-        {
-          "id": 104,
-          "author": "MikeB",
-          "authorAvatar": "M",
-          "date": "2025-11-15",
-          "content": "I'll bring a friend."
-        },
-        {
-          "id": 105,
-          "author": "JaneD",
-          "authorAvatar": "J",
-          "date": "2025-11-15",
-          "content": "What time do you need people?"
-        },
-        {
-          "id": 106,
-          "author": "ProjectCoordinator",
-          "authorAvatar": "P",
-          "date": "2025-11-15",
-          "content": "@JaneD 9am to 3pm."
-        },
-        {
-          "id": 107,
-          "author": "MikeB",
-          "authorAvatar": "M",
-          "date": "2025-11-16",
-          "content": "Count me in for 9am."
-        }
-      ]
+      "authorId": "user_001",
+      "authorName": "John Smith",
+      "status": "in-progress",
+      "createdAt": "2025-11-14T10:30:00Z"
     },
     {
       "id": 3,
       "title": "Request: Blankets and warm clothes",
-      "author": "ShelterManager",
-      "authorAvatar": "S",
-      "date": "2025-11-13",
-      "status": "open",
       "content": "Our shelter is running low on blankets and warm clothing for the winter season. Donations can be dropped off at our main location.",
-      "replies": []
+      "authorId": "user_charlie",
+      "authorName": "Charlie Davis",
+      "status": "open",
+      "createdAt": "2025-11-13T14:20:00Z"
+    },
+    {
+      "id": 4,
+      "title": "Coordination for weekend shelter setup",
+      "content": "We need help setting up temporary shelters this weekend. Looking for people with construction experience or willing to learn.",
+      "authorId": "user_alice",
+      "authorName": "Alice Johnson",
+      "status": "in-progress",
+      "createdAt": "2025-12-04T09:15:00Z"
+    },
+    {
+      "id": 5,
+      "title": "Transportation help needed",
+      "content": "Need drivers to help transport supplies from the warehouse to distribution centers. Must have valid license and access to a van or truck.",
+      "authorId": "user_bob",
+      "authorName": "Bob Smith",
+      "status": "open",
+      "createdAt": "2025-12-05T07:30:00Z"
+    }
+  ],
+  "replies": [
+    {
+      "id": 1,
+      "postId": 1,
+      "content": "Great to be here!",
+      "authorId": "user_alice",
+      "authorName": "Alice Johnson",
+      "createdAt": "2025-11-15T10:00:00Z"
+    },
+    {
+      "id": 2,
+      "postId": 1,
+      "content": "Thanks for setting this up.",
+      "authorId": "user_bob",
+      "authorName": "Bob Smith",
+      "createdAt": "2025-11-16T08:30:00Z"
+    },
+    {
+      "id": 3,
+      "postId": 2,
+      "content": "I can help on Saturday!",
+      "authorId": "user_alice",
+      "authorName": "Alice Johnson",
+      "createdAt": "2025-11-14T11:00:00Z"
+    },
+    {
+      "id": 4,
+      "postId": 2,
+      "content": "I'll bring a friend.",
+      "authorId": "user_bob",
+      "authorName": "Bob Smith",
+      "createdAt": "2025-11-15T09:20:00Z"
+    },
+    {
+      "id": 5,
+      "postId": 2,
+      "content": "What time do you need people?",
+      "authorId": "user_002",
+      "authorName": "Jane Doe",
+      "createdAt": "2025-11-15T14:45:00Z"
+    },
+    {
+      "id": 6,
+      "postId": 2,
+      "content": "@JaneD 9am to 3pm.",
+      "authorId": "user_001",
+      "authorName": "John Smith",
+      "createdAt": "2025-11-15T16:00:00Z"
+    },
+    {
+      "id": 7,
+      "postId": 2,
+      "content": "Count me in for 9am.",
+      "authorId": "user_charlie",
+      "authorName": "Charlie Davis",
+      "createdAt": "2025-11-16T07:15:00Z"
+    },
+    {
+      "id": 8,
+      "postId": 4,
+      "content": "I have some construction experience, happy to help!",
+      "authorId": "user_001",
+      "authorName": "John Smith",
+      "createdAt": "2025-12-04T10:30:00Z"
+    },
+    {
+      "id": 9,
+      "postId": 4,
+      "content": "What tools should we bring?",
+      "authorId": "user_charlie",
+      "authorName": "Charlie Davis",
+      "createdAt": "2025-12-04T11:00:00Z"
     }
   ]
 }

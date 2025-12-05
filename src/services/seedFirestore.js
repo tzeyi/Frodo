@@ -21,6 +21,8 @@ export const seedAllData = async () => {
 		await seedContributions()
 		await seedResources()
 		await seedFunding()
+		await seedPosts()
+		await seedReplies()
 		
 		console.log('✅ All data seeded successfully!')
 		return { success: true, message: 'All data seeded successfully!' }
@@ -362,3 +364,54 @@ export const getAllRoles = async () => {
 		throw error
 	}
 }
+
+/**
+ * Seed posts collection
+ */
+export const seedPosts = async () => {
+	try {
+		console.log('💬 Seeding posts...')
+		const batch = writeBatch(db)
+		
+		mockData.posts.forEach((post) => {
+			const postRef = doc(db, 'posts', String(post.id))
+			batch.set(postRef, {
+				...post,
+				createdAt: post.createdAt || new Date().toISOString()
+			})
+		})
+		
+		await batch.commit()
+		console.log(`✅ Seeded ${mockData.posts.length} posts`)
+		return { success: true, message: `Seeded ${mockData.posts.length} posts` }
+	} catch (error) {
+		console.error('❌ Error seeding posts:', error)
+		throw error
+	}
+}
+
+/**
+ * Seed replies collection
+ */
+export const seedReplies = async () => {
+	try {
+		console.log('💭 Seeding replies...')
+		const batch = writeBatch(db)
+		
+		mockData.replies.forEach((reply) => {
+			const replyRef = doc(db, 'replies', String(reply.id))
+			batch.set(replyRef, {
+				...reply,
+				createdAt: reply.createdAt || new Date().toISOString()
+			})
+		})
+		
+		await batch.commit()
+		console.log(`✅ Seeded ${mockData.replies.length} replies`)
+		return { success: true, message: `Seeded ${mockData.replies.length} replies` }
+	} catch (error) {
+		console.error('❌ Error seeding replies:', error)
+		throw error
+	}
+}
+

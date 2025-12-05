@@ -13,7 +13,9 @@ import {
 	seedTickets,
 	seedContributions,
 	seedResources,
-	seedFunding
+	seedFunding,
+	seedPosts,
+	seedReplies
 } from '../services/seedFirestore'
 
 function DataSeedingPage() {
@@ -244,6 +246,20 @@ function DataSeedingPage() {
 								disabled={loading}
 							>
 								💰 Seed Funding
+							</button>
+							<button 
+								className="btn btn-outline"
+								onClick={() => handleSeedIndividual(seedPosts, 'Posts')}
+								disabled={loading}
+							>
+								💬 Seed Posts
+							</button>
+							<button 
+								className="btn btn-outline"
+								onClick={() => handleSeedIndividual(seedReplies, 'Replies')}
+								disabled={loading}
+							>
+								💭 Seed Replies
 							</button>
 						</div>
 					</div>
