@@ -511,7 +511,8 @@ function TicketsPage() {
         <div className="stats shadow bg-base-100">
           <div className="stat">
             <div className="stat-title">Open</div>
-            <div className="stat-value text-error">{ticketsByStatus.open.length}</div>
+            {/* Changed text-error (red) to text-success (green) */}
+            <div className="stat-value text-success">{ticketsByStatus.open.length}</div>
             <div className="stat-desc">filtered by event if selected</div>
           </div>
           <div className="stat">
@@ -521,7 +522,8 @@ function TicketsPage() {
           </div>
           <div className="stat">
             <div className="stat-title">Closed</div>
-            <div className="stat-value text-success">{ticketsByStatus.closed.length}</div>
+            {/* Changed text-success (green) to text-error (red) */}
+            <div className="stat-value text-error">{ticketsByStatus.closed.length}</div>
             <div className="stat-desc">filtered by event if selected</div>
           </div>
         </div>
