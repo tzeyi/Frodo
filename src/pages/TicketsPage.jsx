@@ -11,10 +11,12 @@ import {
   getAllEvents,
   createContribution,
   getUserContributionForTicket,
-  getUserContributions
+  getUserContributions,
+  updateTicket
 } from '../services/resourceService'
 import { getAllLocations, getAllOrganizations } from '../services/seedFirestore'
 import Toast from '../components/Toast'
+import EditTicketModal from '../components/EditTicketModal'
 
 
 function TicketsPage() {
@@ -60,6 +62,27 @@ function TicketsPage() {
     } catch (error) {
       console.error('Error loading user contributions:', error)
     }
+  }
+
+  const handleTicketUpdated = async (updatedTicket) => {
+    // Refresh your tickets list or update local state
+    // e.g., refetch tickets or update the tickets array
+    const savedTicket = await updateTicket(updatedTicket.id, updatedTicket)
+    setTickets(prev =>
+      prev.map(t =>
+        t.id === savedTicket.id ? savedTicket : t
+      )
+    )
+  }
+
+  const handleTicketDeleted = async (ticketId) => {
+    // Refresh your tickets list or remove from local state
+    // e.g., setTickets(prev => prev.filter(t => t.id !== ticketId))
+    await deleteTicket(ticketId)
+
+    setTickets(prev =>
+      prev.filter(t => parseInt(t.id) !== parseInt(ticketId))
+    );
   }
 
   // Fetch data on component mount
@@ -337,7 +360,7 @@ function TicketsPage() {
               </select>
             </div>
           </div>
-          <div className="bg-base-200 rounded-lg p-4">
+          <div className="bg-base-100 rounded-lg p-1">
             <div className="overflow-x-auto">
               <table className="table table-sm">
                 <thead>
@@ -368,7 +391,7 @@ function TicketsPage() {
                             )}
                           </td>
                           <td>
-                            <span className="badge badge-primary badge-lg">
+                            <span className="badge badge-primary badge-sm">
                               {contrib.amount} {ticket?.unit || contrib.unit}
                             </span>
                           </td>
@@ -485,7 +508,7 @@ function TicketsPage() {
 
       {/* Stats */}
       <section className="p-5 flex justify-between items-end">
-        <div className="stats shadow">
+        <div className="stats shadow bg-base-100">
           <div className="stat">
             <div className="stat-title">Open</div>
             <div className="stat-value text-error">{ticketsByStatus.open.length}</div>
@@ -978,139 +1001,17 @@ function TicketsPage() {
 
       {/* Pop-up Modal */}
       {selectedTicket && (
-        <dialog className="modal modal-open">
-          <div className="modal-box">
-            <h3 className="font-bold text-lg">{selectedTicket.title}</h3>
-
-            <div className="py-4">
-              <p className="text-base-content/70 mb-4">{selectedTicket.description}</p>
-
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Event:</span>
-                  <span>{getEventName(selectedTicket)}</span>
-                </div>
-                {(() => {
-                  const event = masterEvents.find(e => String(e.id) === String(selectedTicket.eventId))
-                  return event ? (
-                    <>
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">Event Start:</span>
-                        <span>{new Date(event.startDate).toLocaleString()}</span>
-                      </div>
-                      {event.endDate && (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold">Event End:</span>
-                          <span>{new Date(event.endDate).toLocaleString()}</span>
-                        </div>
-                      )}
-                    </>
-                  ) : null
-                })()}
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Resource:</span>
-                  <span className="capitalize">{selectedTicket.resourceType}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Requested:</span>
-                  <span>{selectedTicket.amountRequested} {selectedTicket.unit}</span>
-                </div>
-                {(() => {
-                  const userContrib = userContributions[selectedTicket.id] || 0
-                  const totalContrib = selectedTicket.amountAchieved || 0
-                  const remaining = selectedTicket.amountRequested - totalContrib
-                  return (
-                    <>
-                      {userContrib > 0 && (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-primary">Your Contribution:</span>
-                          <span className="text-primary">{userContrib} {selectedTicket.unit}</span>
-                        </div>
-                      )}
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold">Total Contributed:</span>
-                        <span>{totalContrib} / {selectedTicket.amountRequested} {selectedTicket.unit}</span>
-                      </div>
-                      {remaining > 0 && (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-warning">Remaining Needed:</span>
-                          <span className="text-warning">{remaining} {selectedTicket.unit}</span>
-                        </div>
-                      )}
-                      {remaining <= 0 && (
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-success">Status:</span>
-                          <span className="text-success">✓ Goal Achieved!</span>
-                        </div>
-                      )}
-                    </>
-                  )
-                })()}
-                <div className="w-full">
-                  <div className="flex justify-between text-sm mb-1">
-                    <span className="font-semibold">Progress:</span>
-                    <span>{Math.round(((selectedTicket.amountAchieved || 0) / selectedTicket.amountRequested) * 100)}%</span>
-                  </div>
-                  <progress 
-                    className="progress progress-primary w-full" 
-                    value={selectedTicket.amountAchieved || 0} 
-                    max={selectedTicket.amountRequested}
-                  ></progress>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Location:</span>
-                  <span>{getLocationName(selectedTicket.locationId)}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Priority:</span>
-                  <span
-                    className={`badge badge-outline ${selectedTicket.priority === 'high'
-                      ? 'badge-error'
-                      : selectedTicket.priority === 'medium'
-                        ? 'badge-warning'
-                        : 'badge-info'
-                      }`}
-                  >
-                    {selectedTicket.priority}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="font-semibold">Current Status:</span>
-                  <span
-                    className={`badge ${selectedTicket.status === 'open'
-                      ? 'badge-error'
-                      : selectedTicket.status === 'in-progress'
-                        ? 'badge-warning'
-                        : 'badge-success'
-                      }`}
-                  >
-                    {selectedTicket.status}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="modal-action">
-              {(selectedTicket.status === 'open' || selectedTicket.status === 'in-progress') && (
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleTakeTicket(selectedTicket)}
-                >
-                  Contribute
-                </button>
-              )}
-
-              <button className="btn btn-ghost" onClick={() => setSelectedTicket(null)}>
-                Close
-              </button>
-            </div>
-          </div>
-
-          {/* Click outside to close */}
-          <form method="dialog" className="modal-backdrop">
-            <button onClick={() => setSelectedTicket(null)}>close</button>
-          </form>
-        </dialog>
+        <EditTicketModal
+          selectedTicket={selectedTicket}
+          onClose={() => setSelectedTicket(null)}
+          masterEvents={masterEvents}
+          userContributions={userContributions}
+          getEventName={getEventName}
+          getLocationName={getLocationName}
+          handleTakeTicket={handleTakeTicket}
+          onTicketUpdated={handleTicketUpdated}
+          onTicketDeleted={handleTicketDeleted}
+        />
       )}
 
       {/* Create Event Modal */}

@@ -58,7 +58,7 @@ function DashboardPage() {
 
   // Show loading page if API data not fetch yet
   if (resourceLoading || fundingLoading || eventsLoading || ticketsLoading) {
-    return <div>Loading...</div>;
+    return <span className="loading loading-ring loading-xl"></span>
   }
 
   // Prepare chart data from JSON data
@@ -101,9 +101,6 @@ function DashboardPage() {
   const pageContent = (
     <>
       {/* Heading Section */}
-      {console.log("tickets: ")}
-      {console.log(tickets)}
-
       <h1 className="pl-5 pt-5 text-2xl font-bold text-primary mb-4"> Welcome to Frodo! </h1>
 
       <section className="flex flex-col lg:flex-row gap-4 p-2">
@@ -260,8 +257,6 @@ function DashboardPage() {
           {/* Event 1: Emergency Shelter Setup */}
           {events.map((event, index) => {
             const eventTickets = tickets.filter(ticket => parseInt(ticket.eventId) === parseInt(event.id))
-            // console.log("send event Tickets: ")
-            // console.log(eventTickets)
 
             return <EventCard key={index} eventTitle={event.name} eventDesc={event.description} eventTickets={eventTickets}/>
           })}

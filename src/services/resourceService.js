@@ -371,15 +371,34 @@ export const getTicketsByOrganization = async (organizationId) => {
 /**
  * Delete a ticket
  */
+
 export const deleteTicket = async (ticketId) => {
-    try {
-        await deleteDoc(doc(db, 'tickets', ticketId))
-        return { success: true, id: ticketId }
-    } catch (error) {
-        console.error('Error deleting ticket:', error)
-        throw error
-    }
-}
+  try {
+    const contribRef = collection(db, "contributions"); // collection where contributions are stored
+    const q = query(contribRef, where("ticketId", "==", ticketId));
+    const contribSnap = await getDocs(q);
+
+    const deletePromises = contribSnap.docs.map(d => deleteDoc(doc(db, "contributions", d.id)));
+    await Promise.all(deletePromises);
+
+    await deleteDoc(doc(db, "tickets", ticketId));
+    return { success: true, id: ticketId, deletedContributions: contribSnap.docs.length };
+    
+  } catch (error) {
+    console.error("Error deleting ticket or contributions:", error);
+    throw error;
+  }
+};
+
+// export const deleteTicket = async (ticketId) => {
+//     try {
+//         await deleteDoc(doc(db, 'tickets', ticketId))
+//         return { success: true, id: ticketId }
+//     } catch (error) {
+//         console.error('Error deleting ticket:', error)
+//         throw error
+//     }
+// }
 
 // Contributions
 /**
